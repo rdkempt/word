@@ -1,0 +1,513 @@
+name: ci
+
+# CI builds nothing first: it runs the committed ./word (see docs/BOOTSTRAP.md)
+# against its own source. The other tools the suites use (python3, openssl, GNU
+# as, llvm-mc, qemu-user, node, go) are oracles that word's output is checked
+# against, and word needs none of them.
+on:
+  # A pull request covers the branch it comes from, so a push only triggers this
+  # on main. Without the filter, a push to a branch with an open pull request
+  # ran everything twice.
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+# Cancel an older run on the same branch when a new commit is pushed, so a
+# force-push doesn't leave the old run going. main is never cancelled: every
+# merge should get its own result.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+# Every `uses:` here is pinned to a commit SHA, with the version it belongs to in
+# a trailing comment. The maintainer of an action can move a tag like `@v4`; a
+# SHA is the code that was reviewed. GitHub recommends pinning, and the comment
+# keeps the pin readable.
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    # A draft pull request doesn't run the suite. Marking it ready for review
+    # does, which is why `ready_for_review` is in the trigger list above.
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    # Without a timeout a stalled job runs to the six-hour default. The steps
+    # that wait on the network have shorter caps of their own, and those add
+    # up to 30 minutes, so the job gets room for them plus everything else.
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      # The cross-check tools, installed before the first suite. Several suites
+      # run their arm64 half under qemu-user only when it's there and skip it
+      # otherwise, which would pass here with that half never run, so this step
+      # fails if qemu is missing. The same goes for python3 and openssl: the
+      # bootstrap seed, the fixture servers and every certificate need them.
+      - name: install llvm and qemu-user (test oracles)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq llvm qemu-user-static || true
+          command -v qemu-aarch64-static \
+            || { echo "qemu-aarch64-static is missing, and the arm64 half of every suite would skip"; exit 1; }
+          command -v python3 || { echo "python3 is missing, and the seed and fixture servers can't run"; exit 1; }
+          command -v openssl || { echo "openssl is missing, and no certificate can be made"; exit 1; }
+
+      # The committed word rebuilds word from compiler/word.w (compile, assemble
+      # and link, all in word) and must get the same bytes as itself. This is
+      # the self-hosting fixed point.
+      - name: word verify (fixed point)
+        run: sh dev/toolchain/test_selfhost.sh
+
+      # `word bootstrap` must reproduce the committed binary byte for byte, so the
+      # binary in the repo is the one this source produces.
+      - name: word bootstrap is reproducible
+        run: |
+          ./word bootstrap -o /tmp/word.rebuilt
+          cmp ./word /tmp/word.rebuilt
+          echo "word bootstrap == committed ./word"
+
+      # Diverse double-compilation: the Python compiler in bootstrap/ compiles
+      # compiler/word.w into word_A, word_A compiles it into word_B, and word_B
+      # must equal the committed binary. `word verify` can't show that the binary
+      # is what the source says, because the binary is what's being checked.
+      # This can.
+      - name: the foreign seed reproduces the committed binary
+        run: sh dev/toolchain/test_bootstrap_seed.sh
+
+      # Every program in examples/. The tools there are checked against a
+      # fixture and, where one exists, against the GNU tool of the same name.
+      - name: examples build + run
+        run: sh dev/toolchain/test_examples.sh
+
+      # Every subcommand (build, run, asm, verify, bootstrap, no arguments and an
+      # unknown command) and every contract path (:before, :after, shared,
+      # recursive, inside a hook), each for success and failure, and the
+      # diagnostic format: file:line:col: message, with no line of the compiler
+      # leaking out.
+      - name: language + CLI conformance (commands, contracts, diagnostics)
+        run: sh dev/toolchain/test_lang.sh
+
+      # The tagged value model (SPEC 3.6): no integer can pass for a region.
+      - name: tagged value model (kind test)
+        run: sh dev/toolchain/test_tag.sh
+
+      # What the language promises, as opposed to what the compiler happens to
+      # do. Each case is a rule from the SPEC and fails if the rule stops
+      # holding.
+      - name: language guarantees (definite assignment, kinds, faults)
+        run: sh dev/toolchain/test_guarantees.sh
+
+      # err() and ended(), most of copy(), most of the SPEC 10.2 runtime faults,
+      # and map keys that aren't text.
+      - name: coverage gaps (err, ended, copy, SPEC 10.2 faults, non-text map keys)
+        run: sh dev/toolchain/test_gaps.sh
+
+      # Source that is extreme in shape (deep nesting, long chains) instead of
+      # size. The compiler has to finish promptly and either compile a program
+      # that runs and prints the right answer, or refuse it with a located
+      # diagnostic. Exit 70 fails the case: that's word's runtime fault code, so
+      # it means the compiler itself faulted.
+      - name: compiler resource limits (extreme shapes, one invariant)
+        run: sh dev/toolchain/test_compile_limits.sh
+
+      # A value that contains itself (`a[0] = a`). The operations that walk a
+      # value (the comparisons, sort, find, out, `.`, stringify) must stop with a
+      # located fault, never a crash or a hang, and the ones that don't (len,
+      # kind, indexing, keys, has, copy) must answer normally. Every case runs on
+      # both targets.
+      - name: cycles (what walks one, what does not, on both targets)
+        run: sh dev/toolchain/test_cycle.sh
+
+      # SPEC 3.7 makes a map key read-only, because the map indexes it by its
+      # contents. This crosses every way a program can reach a key's region (14
+      # rows) with every way it can use it (5 columns: write, read, append, copy,
+      # rekey), and checks the 14 write refusals on arm64 too.
+      - name: the map-key aliasing matrix (14 reaches x 5 uses)
+        run: sh dev/toolchain/test_map_alias.sh
+
+      # decode, pad and number can hand back their argument unchanged, and a
+      # for-each loop or a contract hook can keep a second reference. A region
+      # reached twice like that must never be appended in place or given back to
+      # the arena. x86-64 and arm64.
+      - name: a region reachable twice is never treated as unique
+        run: sh dev/toolchain/test_alias.sh
+
+      # The optimiser checked against a second compiler instead of expected
+      # answers: a copy of word with every optimiser gate pinned to its
+      # conservative side must give the same output and exit status on 200
+      # generated programs that put the passes' assumptions side by side (every
+      # fifth one on arm64 too). The hand-written tests check one optimisation at
+      # a time; this reaches the combinations.
+      - name: the optimiser changes no answer (generated, differential)
+        run: sh dev/toolchain/test_opt_differential.sh
+
+      # A float literal is the nearest double, bit for bit. The constant is read
+      # out of the assembly word emits and compared with Python's strtod, so the
+      # check never goes through word's own float printing.
+      - name: float literals are correctly rounded
+        run: sh dev/toolchain/test_float_exact.sh
+
+      # Floats (docs/VALUE_MODEL.md: tag 010, a boxed IEEE-754 double): literals,
+      # int/float promotion, comparing across the two, printing, and the
+      # integer-only operators such as % refusing a float.
+      - name: floating point (literals, promotion, printing)
+        run: sh dev/toolchain/test_float.sh
+
+      # Maps and the json module (SPEC 3.7 and 12.3): the {} literal, reads and
+      # writes, keys/has/len, equality, the parse/stringify round trip, and the
+      # hostile input (deep nesting, lone surrogates, huge exponents, cycles)
+      # that has to fail as data and never crash.
+      - name: maps and JSON ({} literal, parse/stringify, hostile input)
+        run: sh dev/toolchain/test_json.sh
+
+      # The text builtins (char, decode, encode, split, pad) and kind(), and the
+      # gating check: a program that doesn't use them carries none of their
+      # runtime.
+      - name: txt module and kind()
+        run: sh dev/toolchain/test_txt.sh
+
+      # read() and write() have no size cap, the arena grows on demand past its
+      # old 256 MiB limit, mark/reset bounds it, and values that die straight
+      # away are reclaimed.
+      - name: runtime limits (file size, arena growth, mark/reset, reclaim)
+        run: |
+          sh dev/toolchain/test_bigio.sh
+          sh dev/toolchain/test_arena_grow.sh
+          sh dev/toolchain/test_arena_reset.sh
+          sh dev/toolchain/test_arena_reclaim.sh
+
+      # The register-pinning pass keeps a function's hottest integers in the
+      # callee-saved registers (rbx and r12-r15 on x86-64, x19-x28 on arm64)
+      # across every call, so no runtime function may change one without saving
+      # it first. It's checked on the assembly word emits, because a helper on a
+      # path your CPU never takes (the AES code for a CPU without AES-NI, say)
+      # could break the rule without it showing up on the machine you test on.
+      - name: no runtime function clobbers a callee-saved register
+        run: sh dev/toolchain/test_abi_regs.sh
+
+      # Cost has to grow the way it should: an append loop is amortised O(1)
+      # per append (both `s = s . x` and the join chain `s = s . a . b`), a loop
+      # that slices stays flat in memory, sort is O(n log n), a map stays O(1)
+      # per operation, and compile time grows linearly with the number of
+      # functions, whichever way a call chain runs. Each of these was once much
+      # worse.
+      - name: scaling guards (append, join chain, slice, sort, map, compile)
+        run: |
+          sh dev/toolchain/test_append_scaling.sh
+          sh dev/toolchain/test_slice_scaling.sh
+          sh dev/toolchain/test_sort_scaling.sh
+          sh dev/toolchain/test_map_scaling.sh
+          sh dev/toolchain/test_compile_scaling.sh
+
+      # word's own x86-64 assembler against GNU as, instruction by instruction,
+      # over corpus.txt and net_corpus.txt. GNU as and objcopy are only a
+      # cross-check here; word never needs them to build or run.
+      - name: encoder vs GNU as
+        run: |
+          command -v as && command -v objcopy \
+            || { echo "GNU as/objcopy are missing, and this oracle must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_encoder_vs_as.sh
+
+      # word's own AArch64 assembler against llvm-mc, over every instruction in
+      # a64_corpus.txt and all 6,636 logical immediates the encoding can
+      # express. llvm-mc is only a cross-check.
+      - name: AArch64 encoder vs llvm-mc
+        run: |
+          # The suite skips without llvm-mc, which is right on a contributor's
+          # machine and wrong here: a runner that lost the tool would report a
+          # pass for thousands of encodings that never ran.
+          command -v llvm-mc || command -v llvm-mc-18 || command -v llvm-mc-17 \
+            || { echo "llvm-mc is missing, and this oracle must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_a64_vs_llvm.sh
+
+      # The AArch64 backend end to end: word assembles and links an ELF and the
+      # ELF runs under qemu. This covers what an encoding oracle can't: the wide
+      # `mov` sequences llvm-mc refuses, masks that don't fit a 63-bit integer,
+      # label relocations and .align padding. qemu-user is only for testing.
+      - name: AArch64 assemble, link and run (qemu)
+        run: |
+          command -v qemu-aarch64-static \
+            || { echo "qemu-aarch64-static is missing, and this suite must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_a64_run.sh
+
+      # The arm64 code generator against the x86-64 one: word builds each
+      # program for both, and the two outputs must be byte-identical, faults and
+      # exit codes included. It also checks that a net program builds for arm64.
+      - name: arm64 codegen vs x86-64 codegen
+        run: |
+          command -v qemu-aarch64-static \
+            || { echo "qemu-aarch64-static is missing, and this suite must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_a64_lang.sh
+
+      # Every builtin and kind-sensitive operator handed a value of every kind,
+      # on both targets. A kind it doesn't take must be a located fault, never a
+      # signal, garbage, or the value handed back as if it were right.
+      - name: the kind matrix (every builtin x every kind, x86-64 and arm64)
+        run: |
+          command -v qemu-aarch64-static \
+            || { echo "qemu-aarch64-static is missing, and this suite must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_kinds.sh
+
+      # The other half of the kind matrix: every builtin and operator given the
+      # right kind, and held to the exact answer and the documented boundaries.
+      - name: builtin correctness (known answers + boundaries)
+        run: sh dev/toolchain/test_builtins.sh
+
+      # out() fills a buffer and err() writes as it ends, so this holds them to
+      # call order: a fault writes the finished lines before its message, a prompt
+      # reaches a pipe before the program reads, exec and a terminal get what
+      # they should, and 100,000 lines into a pipe are a handful of write(2)
+      # calls. Both targets, from the qemu installed above.
+      - name: output order and buffering (x86-64 and arm64)
+        run: |
+          command -v qemu-aarch64-static \
+            || { echo "qemu-aarch64-static is missing, and this suite must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_output.sh
+
+      # random() takes its bytes from the OS, and every key and nonce in net
+      # comes from it. Under a seccomp filter that fails getrandom (python3 sets
+      # it up), a program that asks for randomness must stop with a located fault
+      # on both targets, and a TLS fetch must stop before it sends a byte.
+      - name: random() fails closed when the OS has no entropy (x86-64 and arm64)
+        run: sh dev/toolchain/test_random.sh
+
+      # The crypto word implements itself (the net library carried in
+      # compiler/word.w) against published vectors, on both targets from the one
+      # source.
+      - name: crypto in word (known-answer vectors, x86-64 and arm64)
+        run: sh dev/toolchain/test_crypto_w.sh
+
+      # connect, send, recv and close over loopback, on both targets from one
+      # source: the layer DNS, TLS and HTTP sit on. A small Python server
+      # answers the client.
+      - name: sockets in word (loopback, x86-64 and arm64)
+        run: sh dev/toolchain/test_sockets.sh
+
+      # fs.dir (readdir) on both targets, the directory listing the folder model
+      # of SPEC 11 depends on. It also checks the paths fs hands the OS, and what
+      # a write does when a pipe's reader has gone.
+      - name: fs.dir in word (readdir, x86-64 and arm64)
+        run: sh dev/toolchain/test_fsdir.sh
+
+      # read() returns the whole file (SPEC 12.1), including a /proc or /sys file
+      # whose reported size is zero.
+      - name: fs.read reads whole files (x86-64 and arm64)
+        run: sh dev/toolchain/test_readall.sh
+
+      # net is word source bundled into the program that uses it. A program
+      # calling get() builds for both targets and carries the library, and a
+      # program that never uses the network carries none of it.
+      - name: net in word (bundled, x86-64 and arm64)
+        run: sh dev/toolchain/test_net_w.sh
+
+      # The folder is the program (SPEC 11): building app.w compiles every .w
+      # file beside it as one program, on both targets. It also checks that a
+      # diagnostic names the real file, that a duplicate definition is an error
+      # naming both places, and that building any other file stays single-file.
+      - name: folder is the program (multi-file, x86-64 and arm64)
+        run: sh dev/toolchain/test_folder.sh
+
+      # The x86-64 word cross-compiles compiler/word.w to an arm64 word, which
+      # must rebuild itself from the same source and get the same bytes: the
+      # fixed point of test_selfhost.sh on the other architecture.
+      - name: arm64 self-hosting (the arm64 word rebuilds itself)
+        run: |
+          command -v qemu-aarch64-static \
+            || { echo "qemu-aarch64-static is missing, and this suite must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_selfhost_a64.sh
+
+      # The ELF word writes, read back as a container: three page-aligned
+      # PT_LOAD segments with no page both writable and executable, and a
+      # PT_GNU_STACK header saying the stack isn't executable, so the answer
+      # doesn't depend on the loader's default.
+      - name: the ELF container (W^X segments, PT_GNU_STACK)
+        run: sh dev/toolchain/test_elf.sh
+
+      # `word asm -win` writes a PE (a kernel32 import table and IAT) with word's
+      # own linker, no MinGW. Here it's checked with objdump. wine isn't
+      # installed, so the cases that run a PE skip; windows.yml runs them on
+      # Windows.
+      - name: Windows PE backend (word asm -win)
+        run: sh dev/toolchain/test_win_pe.sh
+
+      # Cross-compiles compiler/word.w to word.exe and checks the PE. The part
+      # where word.exe rebuilds itself needs wine and skips here; windows.yml
+      # does it natively.
+      - name: Windows self-hosting (word.exe)
+        run: sh dev/toolchain/test_selfhost_win.sh
+
+      # Thousands of truncated and corrupted certificates, fed to the same entry
+      # points a server's certificate reaches, each of which must be rejected
+      # (docs/SECURITY.md section 5). A bounds fault counts as a failure: word
+      # catches the read, but a decoder that trusts a length off the wire is
+      # still the bug. openssl and python3 make and mutate the seed certificates.
+      - name: X.509 decoder fuzz (malformed certs, no fault)
+        run: sh dev/toolchain/test_fuzz.sh
+
+      # Everything that runs before a signature is checked: the handshake
+      # framing, the ServerHello, HelloRetryRequest, CertificateRequest and
+      # Certificate messages, the record layer and the client's state machine.
+      - name: fuzz the TLS handshake decoders
+        run: sh dev/toolchain/test_fuzz_tls.sh
+
+      # The two parsers a remote party reaches outside TLS: the DNS response
+      # parser, before any connection exists, and the HTTP response framing,
+      # which is all there is over http://. Any non-zero exit fails.
+      - name: fuzz the DNS response parser and the HTTP response framing
+        run: sh dev/toolchain/test_fuzz_net.sh
+
+      # The SPEC and the compiler must agree about which kinds exist, and every
+      # kind the SPEC names must be one a program can get.
+      - name: the SPEC and the compiler agree about kinds
+        run: sh dev/toolchain/test_spec_kinds.sh
+
+      # The programs in README.md and SPEC 13, taken from the documents as they
+      # are now, built and run on x86-64 and arm64, and held to the output the
+      # text says they print.
+      - name: the documentation's examples print what they say
+        run: |
+          command -v qemu-aarch64-static \
+            || { echo "qemu-aarch64-static is missing, and the arm64 half of this suite must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_doc_examples.sh
+
+      # The numbers the docs give about this repository must be the
+      # repository's numbers.
+      - name: the counts in the docs match the repository
+        run: sh dev/toolchain/test_doc_counts.sh
+
+      # The suites themselves: no shell function called before it's defined
+      # (under sh that's "not found", and the case never runs), and no suite
+      # that no workflow runs.
+      - name: every suite runs the cases it names
+        run: sh dev/toolchain/test_suites.sh
+
+      # The benchmark harness behind docs/PERFORMANCE.md (bench.sh,
+      # compilespeed.sh and scaling.sh) has to fail when a benchmark fails. Each
+      # way one can go wrong, such as a failed build, a failed run or a wrong
+      # answer, is built as a benchmark of its own and held to the exit code and
+      # the row's label, and the revision line to what the tree really is.
+      - name: the benchmark harness fails when a benchmark fails
+        run: sh dev/toolchain/test_bench_harness.sh
+
+      # SPEC 12.2 gives the TLS 1.3 surface as two tables: what the ClientHello
+      # offers, and what it leaves out. This decodes the ClientHello the client
+      # encodes (pinned in test_crypto_w's KAT) and fails if it and the tables
+      # disagree either way.
+      - name: the SPEC's TLS tables match the ClientHello on the wire
+        run: sh dev/toolchain/test_tls_surface.sh
+
+      # The editor grammar is generated from compiler/word.w, so the committed
+      # one has to match what gen_tmgrammar.sh produces now.
+      - name: the editor grammar matches the language
+        run: sh dev/toolchain/test_tmgrammar.sh
+
+      # The language server: its generated tables match the compiler, the
+      # compiler and the SPEC agree on every builtin, it answers over real LSP
+      # framing, and its outline matches the `fn_<name>:` labels in
+      # `word build -asm` for every definition in the repo. The suite skips
+      # without node, so `node --version` runs first and fails the step if node
+      # is missing.
+      - name: language server (protocol, generated tables, outline vs compiler)
+        run: node --version && sh dev/toolchain/test_langserver.sh
+
+      # get, post, put, delete and head, the
+      # `insecure` flag, where the case that matters is that leaving it out
+      # keeps verification on, and a server that asks for a client certificate.
+      # Everything runs against 127.0.0.1, so no root and no external network.
+      - name: net verbs and the insecure flag (local servers)
+        run: sh dev/toolchain/test_net_verbs.sh
+
+      # SPEC 12.2's X.509 profile, with the same certificates put to word, to
+      # openssl and to Go's crypto/x509, including the cases where they're
+      # documented to disagree. Go is asserted, like llvm-mc and node, so a
+      # runner without it can't pass with the second oracle skipped.
+      - name: the X.509 profile vs openssl and Go
+        run: |
+          command -v go || { echo "go is missing, and the second X.509 oracle must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_x509_profile.sh
+
+      # The bounds a fetch runs under (SPEC 12.2): the connect, idle and total
+      # deadlines, the response ceiling, and a response cut short. Local servers
+      # only, so no root and no external network.
+      - name: the deadlines and the response ceiling
+        run: sh dev/toolchain/test_net_limits.sh
+
+      # TLS 1.3 against a local openssl s_server with a generated chain (ECDSA
+      # and RSA leaves, direct and through an intermediate), and a plain http://
+      # fetch from a local server. It adds its throwaway root to the system trust
+      # store, so it runs under sudo and puts the store back when it exits.
+      - name: net vs a real local server (TLS ECDSA/RSA + plain HTTP)
+        run: sudo -E sh dev/toolchain/test_tls_server.sh
+
+      # The same handshakes run by arm64 code under qemu. One client, built for
+      # both targets and held to the same answers: both cipher suites, all three
+      # groups (two through a HelloRetryRequest), RSA and ECDSA leaves, the
+      # refusals, and with verification on, chains under a throwaway root. sudo
+      # lets the suite add that root inside a private mount namespace, never to
+      # the runner's own store.
+      - name: TLS 1.3 handshakes executed by arm64 code (qemu)
+        run: |
+          command -v qemu-aarch64-static \
+            || { echo "qemu-aarch64-static is missing, and this suite must not skip in CI"; exit 1; }
+          sudo -E sh dev/toolchain/test_tls_a64.sh
+
+      # The compiler's front end fed truncated and corrupted real source and
+      # broken indentation, and json.parse fed hostile documents (with the
+      # stringify round trip).
+      - name: fuzz the compiler front end (truncation, corruption, indentation)
+        run: sh dev/toolchain/test_fuzz_frontend.sh
+
+      - name: fuzz json.parse (and the stringify round trip)
+        run: sh dev/toolchain/test_fuzz_json.sh
+
+      # Chains that are correctly signed but must be refused: a non-CA
+      # certificate used as an intermediate, an expired intermediate, a pathlen
+      # violation, a name mismatch, an untrusted root and more. A client that
+      # accepts everything passes the suite above, so this is the half that
+      # catches it.
+      - name: certificates the client must reject
+        run: sudo -E sh dev/toolchain/test_tls_reject.sh
+
+      # The resolver comes from /etc/resolv.conf, and localhost is answered
+      # without asking it. The suite shadows /etc inside a private mount
+      # namespace and runs a logging resolver of its own in a fresh network
+      # namespace, so it needs sudo, and the runner's own files and network are
+      # never touched. test_win_netconf.sh in windows.yml is the Windows half.
+      #
+      # Capped at five minutes because it runs as root and shadows /etc. If it
+      # hangs, it fails as itself instead of using up the job's time.
+      - name: the resolver is taken from the host's DNS configuration
+        timeout-minutes: 5
+        run: sudo -E sh dev/toolchain/test_dns_conf.sh
+
+      # Live HTTPS. It depends on the runner's network, so it's informational.
+      # continue-on-error makes a failure harmless but does nothing about a
+      # hang, so each live step has its own cap.
+      - name: live HTTPS fetch (informational)
+        continue-on-error: true
+        timeout-minutes: 3
+        run: sh dev/toolchain/test_net.sh
+
+      # The same client against a dozen independent hosts: different TLS stacks,
+      # chains, HTTP framing and body sizes. Informational for the same reason.
+      # The script gives each host 45 seconds, so twelve at their worst is nine
+      # minutes, inside the cap.
+      - name: live HTTPS across independent hosts (informational)
+        continue-on-error: true
+        timeout-minutes: 12
+        run: sh dev/toolchain/test_net_live.sh
+
+      # The top 100 domains, and this one gates. It's the only suite that would
+      # have caught two past defects that left every fixture suite green: a
+      # trust store that lost a third of its anchors, and a HelloRetryRequest
+      # answered with a new ClientHello instead of the updated one.
+      #
+      # It allows for a bad network instead of failing on one. If a quarter of
+      # the list answers no TLS at all, the suite reports NETWORK-UNAVAILABLE and
+      # passes with a warning, and the count may fall 2 below its baseline of 88.
+      # What fails the build is a failure nothing explains: a chain openssl
+      # accepts under the same name and word refuses, or a host openssl reaches
+      # with word's own cipher suites and groups where word can't.
+      # TOP_SITES=1000 is the long run.
+      - name: the top 100 domains over https (gating)
+        timeout-minutes: 10
+        run: TOP_SITES=100 TOP_SITES_JOBS=16 sh dev/toolchain/test_top_sites.sh

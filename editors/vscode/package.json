@@ -1,0 +1,50 @@
+{
+  "name": "word-language",
+  "displayName": "word",
+  "description": "The word language for .w files: highlighting, diagnostics, go-to-definition, hover, an outline, completion, formatting, references and rename.",
+  "version": "0.2.0",
+  "publisher": "word",
+  "license": "Apache-2.0",
+  "engines": { "vscode": "^1.60.0" },
+  "categories": ["Programming Languages", "Linters", "Formatters"],
+  "main": "./extension.js",
+  "activationEvents": ["onLanguage:word"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "word",
+        "aliases": ["word"],
+        "extensions": [".w"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "word",
+        "scopeName": "source.word",
+        "path": "./word.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "word.restartServer",
+        "title": "word: Restart Language Server"
+      }
+    ],
+    "configuration": {
+      "title": "word",
+      "properties": {
+        "word.compilerPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the word compiler. When it's empty, the server tries $WORD_BIN, then ./word (word.exe on Windows) in the workspace root, then `word` on PATH. Diagnostics and formatting come from the compiler, so without one there are neither."
+        },
+        "word.languageServer.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run the language server. With it off you still get syntax highlighting, which doesn't need the server."
+        }
+      }
+    }
+  }
+}

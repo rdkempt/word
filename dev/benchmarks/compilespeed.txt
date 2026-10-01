@@ -1,0 +1,10 @@
+4000 chained functions per source
+
+language      lines   build_ms   artifact_B      lines/sec
+word           8001        104       360448          76933
+c              4002       1212        15952           3302
+c0             4002        572       454328           6997
+go             4006        381      2810937          10514
+
+== word compiling its own 46910-line toolchain (compile+assemble+link) ==
+word.w        46910        547      5402624          85759

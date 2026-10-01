@@ -1,0 +1,247 @@
+name: macos
+
+# The macOS port has its own trigger because it's the one workflow here that
+# costs real money. `macos-arm-run` needs an Apple Silicon runner, macOS minutes
+# bill at 10x the Linux rate, and every job is rounded up to a whole minute, so
+# it only runs when the answer could have changed:
+#
+#   - a pull request that touches one of the paths below
+#   - a push to main that touches one of them
+#   - by hand, from the Actions tab
+#
+# The paths are the files that decide whether macOS runs what word builds:
+# compiler/word.w holds the Mach-O writer and the Darwin syscall shim, `word` is
+# the committed binary that does the cross-build, and the dev/toolchain files
+# are the reference images, the programs the Mac runs and the crypto suite it
+# gates on. A change to SPEC.md or to any other test script can't change the
+# answer. The socket and HTTPS steps are informational, so their scripts aren't
+# listed.
+#
+# net isn't available on macOS in 1.0.0. The Darwin shim maps no socket calls,
+# so every net verb answers none there. The crypto known-answer vectors need no
+# sockets and gate like everything else; the socket, TLS and live HTTPS steps
+# are informational until the shim maps sockets.
+#
+# Before turning on branch protection: a pull request that touches none of these
+# paths doesn't run this workflow at all, so its checks are missing, not green.
+# Requiring `macos-arm-run` would block every documentation PR. Require the `ci`
+# workflow, which always runs.
+on:
+  push:
+    branches: [main]
+    paths: &macos_paths
+      - 'compiler/word.w'
+      - 'word'
+      - 'dev/toolchain/test_macho.sh'
+      - 'dev/toolchain/macos_runtime.w'
+      - 'dev/toolchain/macho_ref.py'
+      - 'dev/toolchain/macos_net.w'
+      - 'dev/toolchain/test_crypto_w.sh'
+      - 'dev/toolchain/crypto_w/**'
+      - 'dev/toolchain/netlib_cat.py'
+      - '.github/workflows/macos.yml'
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths: *macos_paths
+  workflow_dispatch:
+
+# Cancel an older run on the same branch when a new commit is pushed, so a
+# force-push doesn't leave the old run going. main is never cancelled: every
+# merge should get its own result.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  # The committed ./word is a Linux ELF, so the cross-build runs on Linux and the
+  # artifacts go to an Apple Silicon runner to run. Most of the port can be
+  # checked off the Mac (llvm-objdump reads Mach-O, and macho_ref.py writes the
+  # reference layout the writer is compared with), but only macOS itself can
+  # say whether it runs an image with no libc and no dylibs, signed by word.
+  macos-arm:
+    runs-on: ubuntu-latest
+    # A draft pull request doesn't run this. Marking it ready for review does,
+    # which is why `ready_for_review` is in the trigger list above.
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      # test_macho.sh skips itself when llvm-objdump isn't there, which is right
+      # on a contributor's machine but would pass here with nothing checked.
+      - name: Mach-O structure (reference + word build -mac)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq llvm || true
+          command -v llvm-objdump \
+            || { echo "llvm-objdump is missing, and test_macho.sh must not skip in CI"; exit 1; }
+          sh dev/toolchain/test_macho.sh
+      - name: cross-build a macOS arm64 binary
+        run: |
+          mkdir -p /tmp/macos-out
+          printf 'out("hello from word on macOS")\n' > /tmp/hello.w
+          ./word build -mac /tmp/hello.w -o /tmp/macos-out/hello-mac
+          # hello only reaches write, mmap and exit. macos_runtime.w reaches the
+          # calls the shim has to translate, not just renumber: openat, fstat64,
+          # renameat, the clock (gettimeofday), getrlimit and getentropy, plus
+          # args(), which depends on the LC_MAIN entry convention.
+          ./word build -mac dev/toolchain/macos_runtime.w -o /tmp/macos-out/rt-mac
+          # And the compiler itself, so the Mac can check that word compiles word
+          # there and gets the same bytes.
+          ./word build -mac compiler/word.w -o /tmp/macos-out/word-mac
+          # Three reference images with the same three-instruction body (exit
+          # 42) and none of word's code: dyld with an empty symbol table, dyld
+          # with none, and a static image. They show which shapes the loader
+          # accepts, so a failure in word's own image can be told apart from a
+          # change in macOS.
+          for m in dyld dyld-nosym static; do
+            python3 dev/toolchain/macho_ref.py /tmp/macos-out/exit42-$m $m
+          done
+          # A throwaway certificate for the local TLS server the Mac starts,
+          # made here where openssl 3 is, so the Mac needs no openssl.
+          openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:P-256 -nodes \
+            -keyout /tmp/macos-out/nb.key -out /tmp/macos-out/nb.crt -days 2 \
+            -subj "/CN=127.0.0.1" -addext "subjectAltName=IP:127.0.0.1" 2>/dev/null
+          ls -l /tmp/macos-out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: macos-out
+          path: /tmp/macos-out
+
+  # The half Linux can't answer: does it run?
+  macos-arm-run:
+    runs-on: macos-14
+    # A draft pull request doesn't run this. Marking it ready for review does,
+    # which is why `ready_for_review` is in the trigger list above.
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    needs: macos-arm
+    # macOS minutes bill at 10x, so a stuck runner is capped well short of the
+    # six-hour default.
+    timeout-minutes: 15
+    steps:
+      # Checkout first: it cleans the workspace, which would delete the
+      # artifacts. The source is here so the Mac can build word with word.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: macos-out
+      - name: run the cross-built binary on Apple Silicon
+        run: |
+          set +e
+          uname -m
+          sw_vers
+          chmod +x hello-mac rt-mac word-mac exit42-*
+
+          # Apple's own toolchain links the same three instructions two ways:
+          # static, and through dyld with no dylibs. This re-checks on every run
+          # which of the two macOS still executes.
+          cat > /tmp/e.s <<'EOF'
+          .globl _main
+          .p2align 2
+          _main:
+              mov w0, #42
+              mov x16, #1
+              svc #0x80
+          EOF
+          cc -c -arch arm64 -o /tmp/e.o /tmp/e.s || echo "(assembling failed)"
+          ld -static -arch arm64 -e _main -o /tmp/a-static /tmp/e.o 2>&1 | tail -3
+          codesign -f -s - /tmp/a-static 2>&1 | tail -1
+          /tmp/a-static; static_rc=$?; echo "apple ld -static -> $static_rc"
+          cc -nostdlib -arch arm64 -Wl,-e,_main -o /tmp/a-nostdlib /tmp/e.o 2>&1 | tail -3
+          /tmp/a-nostdlib; echo "apple cc -nostdlib (dyld, no dylibs) -> $?"
+
+          # The reference image in the shape that runs, and the static one that
+          # doesn't. (dyld-nosym segfaults: dyld needs LC_SYMTAB, which is why
+          # word writes one.)
+          echo "=== reference shapes ==="
+          for m in dyld static; do
+            ./exit42-$m; echo "  exit42-$m -> $?"
+          done
+
+          echo "=== word ==="
+          codesign -dvvv hello-mac 2>&1 | grep -E "CodeDirectory|Signature" || true
+          codesign -v --verbose=4 hello-mac 2>&1 | tail -2
+          otool -l hello-mac | grep -E "cmd LC_|name /usr/lib|entryoff" | head -20
+          out=$(./hello-mac 2>&1); rc=$?
+          echo "word build -mac -> exit=$rc output=$out"
+
+          if [ "$rc" = "0" ] && [ "$out" = "hello from word on macOS" ]; then
+            echo "a word-compiled, word-signed Mach-O ran on Apple Silicon,"
+            echo "with no libc and no dylib linked into it."
+            rtout=$(./rt-mac 2>&1); rtrc=$?
+            echo "--- the runtime against the Darwin syscall map (exit=$rtrc) ---"
+            echo "$rtout"
+            got=$(echo "$rtout" | tr '\n' '|')
+            want='read 18|moved 18|now true|rand true|args 1|'
+            [ "$rtrc" = "0" ] && [ "$got" = "$want" ] || { echo "MISMATCH, wanted $want"; exit 1; }
+            echo "file I/O, rename, clock, entropy and argv all agree with Linux"
+            # word-mac was cross-built on Linux from this source. If it builds
+            # the same source here and gets the same bytes, word self-hosts on
+            # Apple Silicon and both hosts agree on the output.
+            echo "--- word compiling word, on macOS ---"
+            time ./word-mac build -mac compiler/word.w -o /tmp/w2 || { echo "SELF-HOST BUILD FAILED"; exit 1; }
+            ls -l word-mac /tmp/w2
+            cmp word-mac /tmp/w2 || { echo "not a fixed point"; exit 1; }
+            echo "word compiled word on Apple Silicon, byte-identical to the cross-build"
+            # `word run` builds a temp binary for the host and execve's it, so it
+            # checks that host_target picks macOS and not Linux arm64 (which
+            # would build an ELF and fail to exec). Nothing else here uses execve.
+            echo "--- word run, on macOS ---"
+            printf 'out("run on macOS: " . (40 + 2))\n' > /tmp/r.w
+            runout=$(./word-mac run /tmp/r.w 2>&1); runrc=$?
+            echo "exit=$runrc output=$runout"
+            [ "$runrc" = "0" ] && [ "$runout" = "run on macOS: 42" ] || { echo "word run FAILED"; exit 1; }
+            echo "word run built a Mach-O for the host, signed it, and exec'd it"
+            # net_ca_paths in the net library reads its trust anchors on macOS
+            # from /etc/ssl/cert.pem, the bundle Apple ships, so net needs no
+            # Keychain reader. net doesn't run on macOS in 1.0.0, but this fails
+            # if a macOS release stops shipping the file.
+            echo "--- the trust store net will use ---"
+            n=$(grep -c 'BEGIN CERTIFICATE' /etc/ssl/cert.pem 2>/dev/null || echo 0)
+            echo "  /etc/ssl/cert.pem -> $n certificates"
+            [ "$n" -gt 100 ] || { echo "macOS no longer ships a PEM trust store here"; exit 1; }
+            exit 0
+          fi
+          echo "--- what the kernel says ---"
+          log show --last 3m --predicate 'subsystem == "com.apple.kernel" OR process == "kernel"' --style compact 2>/dev/null | grep -i "hello-mac\|exit42\|a-static\|amfi" | tail -12 || true
+          exit 1
+
+      # The crypto the net library is built from, against published vectors,
+      # built on the Mac by word-mac (which the step above showed self-hosts
+      # here). It's plain computation with no sockets, so it runs on macOS.
+      - name: crypto in word on Apple Silicon (known-answer vectors)
+        run: WORD=$PWD/word-mac sh dev/toolchain/test_crypto_w.sh
+
+      # Informational: these can't pass in 1.0.0. The Darwin shim maps no socket
+      # calls, so socket() fails and every net verb answers none. They show the
+      # day that changes. The certificate came with the artifact, and python3
+      # (for the local servers) is on the runner image.
+      - name: sockets and a local TLS 1.3 handshake on Apple Silicon (informational)
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          rc=0
+          WORD=$PWD/word-mac sh dev/toolchain/test_sockets.sh || rc=1
+          ./word-mac build dev/toolchain/macos_net.w -o net-mac
+          python3 dev/benchmarks/netserve.py 4492 nb.crt nb.key >/dev/null 2>&1 &
+          srv=$!
+          sleep 2
+          ./net-mac https://127.0.0.1:4492/p || rc=1
+          kill "$srv" 2>/dev/null || true
+          exit $rc
+
+      # HTTPS to a public host, with the chain checked against Apple's
+      # /etc/ssl/cert.pem and the name resolved through /etc/resolv.conf. It
+      # answers none in 1.0.0 for the same reason as the step above, and it
+      # needs the network, so it's informational.
+      - name: live HTTPS on Apple Silicon, through /etc/ssl/cert.pem (informational)
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          cat > live.w <<'W'
+          b = get("https://api.github.com/rate_limit")
+          if b == none
+              out("NONE")
+              return 1
+          out("fetched " . len(b) . " characters")
+          W
+          ./word-mac build live.w -o live-mac
+          ./live-mac

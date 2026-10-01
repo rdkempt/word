@@ -1,0 +1,43 @@
+# The committed ./word binary is tracked: it's the reproducible seed (see
+# docs/BOOTSTRAP.md). Ignore only local build byproducts.
+
+# object files from checking the encoder against GNU `as` by hand
+# (dev/toolchain/test_encoder_vs_as.sh keeps its own in a temp directory)
+*.o
+
+# Python bytecode, written to bootstrap/__pycache__ when you run the Python
+# bootstrap (bootstrap/wordc.py, as test_bootstrap_seed.sh does)
+__pycache__/
+*.pyc
+
+# benchmark byproducts: bench.sh compiles the timing helper when it's missing,
+# and jsonbench/gen.w generates the JSON input document
+dev/benchmarks/runstat
+dev/benchmarks/jsonbench/data.json
+
+# program output: examples/rpg writes its save file in whatever directory it's
+# run from, and dev/benchmarks/jsonbench/gen.w writes data.json the same way.
+# Running either from the repo root puts the file here.
+/crypt-journal.json
+/data.json
+
+# `word build dev/benchmarks/vecmath/vecmath.w` with no -o, run from here
+/vecmath
+
+# The Windows binary is a local cross-build, not a second committed seed:
+# `word build -win compiler/word.w -o word.exe` at the root makes it, and the
+# release workflow builds its own. Only the Linux `word` above is the auditable
+# seed (docs/BOOTSTRAP.md).
+/word.exe
+
+# release artifacts: .github/workflows/release.yml cross-builds the four targets
+# into dist/ and writes its release notes beside them
+/dist/
+/notes.md
+
+# local packaging byproducts. Nothing in the repo makes these (the release
+# workflow builds its own into dist/), but it's easy to pack the tree at the
+# root by hand to see what an archive would hold, and a `git add -A` once
+# committed one.
+/word.tar
+/word.zip

@@ -1,0 +1,13 @@
+measured    2026-09-24 19:35 UTC
+revision    b3a2487
+machine     a developer machine
+cpu         Intel(R) Core(TM) Ultra 9 275HX (24 cores)
+kernel      Linux 6.6.87.2-microsoft-standard-WSL2
+reps        10 per benchmark per language
+
+gcc         gcc (Debian 15.2.0-7) 15.2.0
+g++         g++ (Debian 15.2.0-7) 15.2.0
+rustc       (absent, skipped)
+go          go version go1.26.4 linux/amd64
+python3     Python 3.13.12
+node        v24.15.0

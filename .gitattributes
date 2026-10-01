@@ -1,0 +1,31 @@
+# Keep the toolchain byte-clean across platforms.
+#
+# Check every text file out with LF endings, whatever the user's git config
+# says. A CRLF checkout (core.autocrlf on Windows or WSL) puts a \r on every
+# line, and the shell scripts fail on it (`set -e\r` is an illegal option).
+# word itself reads a \r as whitespace, in .w source and in .s files, but LF
+# keeps every file the same bytes on every platform.
+* text=auto eol=lf
+
+# The committed `word` binary is the reproducible seed (docs/BOOTSTRAP.md). Mark
+# it, and the other binary files, so git never converts line endings in them.
+word binary
+*.png binary
+*.jpg binary
+*.ico binary
+
+# GitHub's Linguist has no entry for word (adding one takes a pull request to
+# github-linguist/linguist), so it detects `*.w` as CWeb, the other language
+# that uses the extension, and counts it in the repo's Languages bar.
+# `linguist-vendored` leaves the files out of that bar without changing diffs.
+# `linguist-language` sets the highlighting GitHub uses for each file.
+# JavaScript is the closest grammar to word's punctuation: `//` comments,
+# `== != && || !`, `%`, `{key: value}` literals and `arr[i]` indexing all match.
+# `if`, `else`, `return`, `break`, `true`, `false` and `null` are JavaScript
+# keywords too, and word's `loop` and `none` show as plain identifiers.
+*.w linguist-vendored linguist-language=JavaScript
+
+# Leave every file out of the Languages bar. The test suites are shell and the
+# second compiler in bootstrap/ is Python, so the bar showed a shell project.
+# This only changes the language statistics, not highlighting or diffs.
+* linguist-detectable=false

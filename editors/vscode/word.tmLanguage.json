@@ -1,0 +1,78 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "word",
+  "scopeName": "source.word",
+  "fileTypes": ["w"],
+  "_generated": "by dev/toolchain/gen_tmgrammar.sh from compiler/word.w; do not edit by hand",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#string" },
+    { "include": "#char" },
+    { "include": "#import" },
+    { "include": "#contract" },
+    { "include": "#keyword" },
+    { "include": "#builtin" },
+    { "include": "#module-func" },
+    { "include": "#function-def" },
+    { "include": "#number" },
+    { "include": "#operator" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.line.double-slash.word",
+      "match": "//.*$"
+    },
+    "string": {
+      "name": "string.quoted.double.word",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "name": "constant.character.escape.word", "match": "\\\\[ntr0\\\\'\"]" },
+        { "name": "invalid.illegal.unknown-escape.word", "match": "\\\\[^ntr0\\\\'\"]" }
+      ]
+    },
+    "char": {
+      "name": "string.quoted.single.word",
+      "match": "'(\\\\[ntr0\\\\'\"]|[^'])'"
+    },
+    "import": {
+      "match": "^\\s*(import)\\s+(fs|json|net|sys|txt)\\b",
+      "captures": {
+        "1": { "name": "keyword.control.import.word" },
+        "2": { "name": "support.class.module.word" }
+      }
+    },
+    "contract": {
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)(:)(before|after)\\b",
+      "captures": {
+        "1": { "name": "entity.name.function.word" },
+        "2": { "name": "punctuation.separator.word" },
+        "3": { "name": "keyword.other.contract.word" }
+      }
+    },
+    "keyword": {
+      "name": "keyword.control.word",
+      "match": "\\b(if|else|loop|return|break)\\b"
+    },
+    "builtin": {
+      "name": "support.function.builtin.word",
+      "match": "\\b(args|array|bytes|copy|ended|env|err|find|has|in|keys|kind|len|now|number|out|random|round|sort|text)\\b(?=\\s*\\()"
+    },
+    "module-func": {
+      "name": "support.function.module.word",
+      "match": "\\b(append|arch|asmput|asmtake|cacerts|char|close|connect|decode|delete|dir|encode|exec|get|head|image|mark|nameservers|os|pad|parse|post|put|read|recv|rename|reset|send|split|stringify|timeout|udp|write|writex)\\b(?=\\s*\\()"
+    },
+    "function-def": {
+      "match": "^([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+      "captures": { "1": { "name": "entity.name.function.word" } }
+    },
+    "number": {
+      "name": "constant.numeric.word",
+      "match": "\\b[0-9][0-9_]*(\\.[0-9][0-9_]*)?\\b"
+    },
+    "operator": {
+      "name": "keyword.operator.word",
+      "match": "==|!=|<=|>=|&&|\\|\\||<<|>>|[-+*/%.<>!~&|^=]"
+    }
+  }
+}

@@ -1,0 +1,3077 @@
+adc r9, 0
+adc r9, rdx
+adc rax, [rdx+rcx*8]
+adc rdx, 0
+add [r12+0], rax
+add [r12+8], rax
+add [rip+poly_h+0], r8
+add [rip+poly_h+16], r8
+add [rip+poly_h+24], r8
+add [rip+poly_h+32], r8
+add [rip+poly_h+8], r8
+add [rip+tlen], rdx
+add [rsi+0], r8d
+add [rsi+12], r11d
+add [rsi+16], r12d
+add [rsi+20], r13d
+add [rsi+24], r14d
+add [rsi+28], r15d
+add [rsi+4], r9d
+add [rsi+8], r10d
+add dl, 48
+add eax, [rbp+r9]
+add eax, [rdi + rbp]
+add eax, [rdi + rcx*4 - 28]
+add eax, [rdi + rcx*4 - 64]
+add eax, [rsi + rbp]
+add eax, [rsi+rcx]
+add eax, ebx
+add eax, ecx
+add eax, edx
+add eax, r15d
+add ebx, ecx
+add r10, 2
+add r10, 3
+add r10, 8
+add r10, [rsi+16]
+add r10, r15
+add r10, r8
+add r10, rax
+add r10, rbx
+add r10, rcx
+add r10, rdi
+add r11, 4
+add r11, [rsi+24]
+add r11, rax
+add r11, rcx
+add r12, 2
+add r12, 64
+add r12, [rsi+32]
+add r12, r13
+add r12, rax
+add r12, rcx
+add r12d, eax
+add r13, 19
+add r13, r10
+add r13, r11
+add r13, r12
+add r13, r9
+add r13, rax
+add r14, r12
+add r14, rax
+add r14, rcx
+add r15, rax
+add r8, [rsi+0]
+add r8, r13
+add r8, r15
+add r8, rax
+add r8, rcx
+add r8, rdx
+add r8, rsi
+add r8d, ebx
+add r9, 6
+add r9, [rsi+8]
+add r9, r8
+add r9, rax
+add r9, rcx
+add rax, 1900
+add rax, 2
+add rax, 2000
+add rax, 27
+add rax, 3
+add rax, 4
+add rax, 5
+add rax, 719468
+add rax, [r13 + 0]
+add rax, [r13 + rcx*8]
+add rax, [rdx+0]
+add rax, [rdx+16]
+add rax, [rdx+24]
+add rax, [rdx+32]
+add rax, [rdx+8]
+add rax, [rip+dt_d]
+add rax, [rip+dt_h]
+add rax, [rip+dt_mi]
+add rax, [rip+dt_mo]
+add rax, [rip+dt_s]
+add rax, [rip+dt_yoe]
+add rax, r11
+add rax, r13
+add rax, r14
+add rax, r15
+add rax, r8
+add rax, r9
+add rax, rcx
+add rax, rdx
+add rbp, 4
+add rbp, r12
+add rbp, rax
+add rbx, 2
+add rbx, 4
+add rbx, r8
+add rbx, rax
+add rcx, 10
+add rcx, 2
+add rcx, 3
+add rcx, 4
+add rcx, 8
+add rcx, r15
+add rcx, rax
+add rcx, rdx
+add rcx, rsi
+add rdi, 1
+add rdi, 10
+add rdi, 2
+add rdi, 4
+add rdi, r12
+add rdi, r14
+add rdi, rax
+add rdi, rbp
+add rdi, rcx
+add rdi, rdx
+add rdx, r14
+add rdx, r8
+add rsi, 4
+add rsi, 8
+add rsi, r13
+add rsi, r14
+and al, 0xc0
+and bl, 0x3F
+and byte ptr [r13+0], 248
+and byte ptr [r13+31], 127
+and byte ptr [rbx+0], 0x7f
+and ecx, r13d
+and ecx, r9d
+and edx, r10d
+and edx, r14d
+and r10, 0x3F
+and r10, 0x3ffffff
+and r10, r15
+and r10, rdx
+and r11, 0x3F
+and r11, 0x3ffffff
+and r11, r15
+and r11, rdx
+and r12, 0x3ffffff
+and r12, r15
+and r12, rdx
+and r13, 0x3F
+and r8, 0x3ffffff
+and r8, r15
+and r8, rdx
+and r9, 0x3F
+and r9, 0x3ffffff
+and r9, 1
+and r9, r15
+and r9, rdi
+and r9, rdx
+and rax, 0x07
+and rax, 0x0F
+and rax, 0x1F
+and rax, 0x3ffffff
+and rax, 1
+and rax, r11
+and rax, rcx
+and rcx, 0x7f
+and rcx, 0xC0
+and rcx, 63
+and rcx, 7
+and rcx, rax
+and rdi, 255
+and rdx, 0xC0
+and rdx, 15
+and rdx, rcx
+bswap eax
+bswap edx
+bswap rax
+call aead_decrypt
+call aead_encrypt
+call anchor_match
+call asn1_time_to_num
+call b64_decode
+call be_to_le256
+call bn_add
+call bn_eq
+call bn_geq
+call bn_iszero
+call bn_sub
+call build_client_hello
+call cert_sigalg
+call chacha20_block
+call chacha20_xor
+call chacha_qr
+call che16
+call che8
+call chmcpy
+call copy256
+call der_tlv
+call dns_resolve
+call ec_extract_pubkey
+call ec_extract_sig
+call ec_scalar_ok
+call ecdsa_p256_verify
+call fe_add
+call fe_copy
+call fe_cswap
+call fe_frombytes
+call fe_invert
+call fe_mul
+call fe_mul121665
+call fe_one
+call fe_sq
+call fe_sub
+call fe_tobytes
+call fe_zero
+call find_sub
+call fn__toplevel
+call fp_addmod
+call fp_mul
+call fp_submod
+call hkdf_expand
+call hkdf_expand_label
+call hmac_sha256
+call host_match
+call https_request
+call jac_affine
+call load_ca_store
+call memeq
+call mod_exp
+call mont_mul
+call mont_n0inv
+call mont_r2
+call p256_init
+call parse_cert_msg
+call parse_server_hello
+call poly1305_keygen
+call poly1305_mac
+call pt_add
+call pt_copy
+call pt_dbl
+call pt_mul
+call pt_setinf
+call read_digits
+call read_server_flight
+call recv_record
+call rev256
+call rf_append_transcript
+call rsa_em_reverse
+call rsa_modexp_65537
+call rsa_pkcs1_verify
+call rsa_pss_verify
+call rt_alloc
+call rt_as_region
+call rt_build_response
+call rt_dns_skipname
+call rt_eq
+call rt_fill
+call rt_getbyte
+call rt_httpx
+call rt_hx_emit
+call rt_hx_num
+call rt_init
+call rt_isreg
+call rt_join
+call rt_num_to_region
+call rt_out
+call rt_out_num
+call rt_out_region
+call rt_pathcstr
+call rt_putnum
+call rt_resolve
+call rt_slice
+call rt_utf8
+call set_field_n
+call set_field_p
+call sha256
+call sha256_block
+call sock_connect
+call sock_send
+call tls_open
+call tls_seal
+call unixtime_to_num
+call verify_chain
+call verify_one
+call x25519
+call x509_check_dates
+call x509_parse
+call x509_san_match
+clc
+cld
+cmp [rdi+rcx], al
+cmp [rsi+rcx+205], al
+cmp [rsi+rcx+224], al
+cmp al, 0xc0
+cmp al, [rdx+r8]
+cmp al, [rsi+rcx]
+cmp byte ptr [r12+rcx+1], 10
+cmp byte ptr [r12+rcx+2], 13
+cmp byte ptr [r12+rcx+3], 10
+cmp byte ptr [r12+rcx], 13
+cmp byte ptr [r13+r12], 0
+cmp byte ptr [r8+0], 0x55
+cmp byte ptr [r8+1], 0x04
+cmp byte ptr [r8+1], 0x1d
+cmp byte ptr [r8+2], 0x11
+cmp byte ptr [r8+rcx+1], 10
+cmp byte ptr [r8+rcx+2], 13
+cmp byte ptr [r8+rcx+3], 10
+cmp byte ptr [r8+rcx], 13
+cmp byte ptr [rbx+190], 1
+cmp byte ptr [rbx+r12], 0x2e
+cmp byte ptr [rbx+rcx], 0
+cmp byte ptr [rdi+1], 0x2e
+cmp byte ptr [rdi], 0x2a
+cmp byte ptr [rdx+r8], 0x2e
+cmp byte ptr [rip+em_be+255], 0xbc
+cmp byte ptr [rip+rec_buf], 0x14
+cmp byte ptr [rsi+0], 0
+cmp byte ptr [rsi+1], 1
+cmp byte ptr [rsi+204], 0
+cmp byte ptr [rsi+rcx], 0xFF
+cmp byte ptr [rsi+rdx], 0
+cmp dl, [r14+rcx]
+cmp dl, [rsi+r8]
+cmp r10, 4
+cmp r10, [rip+inbuf_len]
+cmp r10, r11
+cmp r10, r12
+cmp r11, 255
+cmp r12, 1
+cmp r12, 65536
+cmp r12, r13
+cmp r12, rax
+cmp r12, rbp
+cmp r13, 0
+cmp r13, 5
+cmp r13, 56
+cmp r13, 6
+cmp r13, 64
+cmp r13, 7
+cmp r13, 8
+cmp r13, r14
+cmp r13, r15
+cmp r13, rcx
+cmp r14, -1
+cmp r14, 0
+cmp r14, 1
+cmp r14, 12
+cmp r14, 254
+cmp r14, 32
+cmp r14, r13
+cmp r15, -1
+cmp r15, 16
+cmp r15, 4194304
+cmp r15, r14
+cmp r8, r9
+cmp r8, rcx
+cmp r8, rdx
+cmp r8, rsi
+cmp r9, 3
+cmp r9, 32
+cmp r9, 4094
+cmp r9, 7
+cmp r9, 8
+cmp r9, 9
+cmp r9, r8
+cmp r9, rcx
+cmp rax, -1
+cmp rax, 0
+cmp rax, 0x0033
+cmp rax, 0x04
+cmp rax, 0x0b
+cmp rax, 0x0f
+cmp rax, 0x10000
+cmp rax, 0x10FFFF
+cmp rax, 0x14
+cmp rax, 0x15
+cmp rax, 0x17
+cmp rax, 0x80
+cmp rax, 0x800
+cmp rax, 0x82
+cmp rax, 0xC0
+cmp rax, 0xD800
+cmp rax, 0xDFFF
+cmp rax, 0xE0
+cmp rax, 0xF0
+cmp rax, 0xF8
+cmp rax, 1
+cmp rax, 10
+cmp rax, 102
+cmp rax, 104
+cmp rax, 112
+cmp rax, 115
+cmp rax, 116
+cmp rax, 13
+cmp rax, 18
+cmp rax, 2
+cmp rax, 32
+cmp rax, 4
+cmp rax, 45
+cmp rax, 46
+cmp rax, 47
+cmp rax, 48
+cmp rax, 50
+cmp rax, 57
+cmp rax, 58
+cmp rax, 64
+cmp rax, 97
+cmp rax, [rbp + 40]
+cmp rax, [rip+inbuf_len]
+cmp rax, [rip+vc_want_iss_len]
+cmp rax, [rsi+rcx*8]
+cmp rax, r11
+cmp rax, r12
+cmp rax, r13
+cmp rax, r14
+cmp rax, rbx
+cmp rax, rcx
+cmp rax, rdx
+cmp rbp, 256
+cmp rbp, 512
+cmp rbx, r13
+cmp rbx, rax
+cmp rbx, rbp
+cmp rcx, 0xC0
+cmp rcx, 1
+cmp rcx, 1048576
+cmp rcx, 122
+cmp rcx, 128
+cmp rcx, 16
+cmp rcx, 19
+cmp rcx, 190
+cmp rcx, 204
+cmp rcx, 22
+cmp rcx, 223
+cmp rcx, 256
+cmp rcx, 32
+cmp rcx, 33
+cmp rcx, 34
+cmp rcx, 4
+cmp rcx, 40
+cmp rcx, 43
+cmp rcx, 45
+cmp rcx, 47
+cmp rcx, 48
+cmp rcx, 5
+cmp rcx, 57
+cmp rcx, 64
+cmp rcx, 65
+cmp rcx, 7
+cmp rcx, 8
+cmp rcx, 90
+cmp rcx, 96
+cmp rcx, 97
+cmp rcx, r10
+cmp rcx, r12
+cmp rcx, r13
+cmp rcx, r14
+cmp rcx, r15
+cmp rcx, r8
+cmp rcx, r9
+cmp rcx, rax
+cmp rcx, rbp
+cmp rcx, rdx
+cmp rcx, rsi
+cmp rdi, 0
+cmp rdi, rax
+cmp rdx, 0
+cmp rdx, 0x80
+cmp rdx, 4
+cmp rdx, r15
+cmp rdx, rcx
+cmp rsi, 0x18
+cmp rsi, 2
+cmp rsi, 64
+cmp rsi, rcx
+dec r10
+dec r12
+dec r13
+dec r14
+dec r15
+dec r8
+dec rbp
+dec rbx
+dec rcx
+dec rdx
+dec rsi
+div rcx
+imul r11, r11, 10
+imul r13, r13, 19
+imul r15, r15, 10
+imul r8, r8, 10
+imul rax, [rip+mm_n0inv]
+imul rax, [rip+poly_r+0]
+imul rax, [rip+poly_r+16]
+imul rax, [rip+poly_r+24]
+imul rax, [rip+poly_r+32]
+imul rax, [rip+poly_r+8]
+imul rax, [rip+poly_s+0]
+imul rax, [rip+poly_s+16]
+imul rax, [rip+poly_s+24]
+imul rax, [rip+poly_s+8]
+imul rax, r9
+imul rax, rax, 10
+imul rax, rax, 100
+imul rax, rax, 153
+imul rax, rax, 19
+imul rax, rax, 2000000
+imul rax, rax, 365
+imul rax, rax, 400
+imul rax, rax, 5
+imul rbx, rbx, 100
+imul rdx, rax
+inc byte ptr [rip+hkdf_ctr]
+inc r10
+inc r11
+inc r12
+inc r13
+inc r14
+inc r15
+inc r8
+inc r9
+inc rax
+inc rbp
+inc rbx
+inc rcx
+inc rdi
+inc rdx
+inc rsi
+ja .cd_no
+ja .r2_sub
+ja .z_bg_ge
+ja rt_oom
+jae .at_19
+jae .se_no
+jae .se_skip
+jae rt_regfault
+jb .cd_no
+jb .dt_short
+jb .r2_nosub
+jb .rb_d2
+jb .rb_d3
+jb .rb_d4
+jb .rb_draw
+jb .z_bg_lt
+jc .mm_uset
+je .L1
+je .at_gt
+je .dq_emit
+je .dq_np
+je .eq_true
+je .hg_rdone
+je .hg_rl
+je .hm_found
+je .hx_he
+je .hx_pdone
+je .ng_bld
+je .ng_hostend
+je .psh_ks
+je .rb_hexend
+je .rf_cert
+je .rf_cv
+je .rf_fin
+je .rf_rec
+je .rl_eol
+je .rl_text
+je .rta_done
+je .se_os
+je .skn_ptr
+je .z2_vo_ecdsa
+jg .b64_d1
+jg .b64_d2
+jg .b64_d3
+jg .fill_got
+jg .fs_no
+jg .hkeyhash
+jg .ng_found
+jg .ord_gt
+jg .rb_cdone
+jg .rb_found
+jg .rb_hexa
+jg .rb_plain
+jg .res_od
+jg .rl_text
+jg .u_bad
+jg .u_yd
+jg rt_bounds
+jg rt_dns
+jge .ad_aadd
+jge .ad_cmpd
+jge .ad_ctd
+jge .ae_aadd
+jge .ae_ctd
+jge .at_cpd
+jge .b64_done
+jge .cpremd
+jge .cx_xd
+jge .dec_done
+jge .dec_store
+jge .dns_c1d
+jge .dns_c2d
+jge .dq_cpd
+jge .dq_emit
+jge .dq_end
+jge .eq_true
+jge .fill128d
+jge .fill64d
+jge .fs_hit
+jge .he_cod
+jge .heb2
+jge .heb4
+jge .hel_ctxd
+jge .hel_lbld
+jge .hg_fvok
+jge .hg_rcpd
+jge .hipmd
+jge .hk0done
+jge .hm_no
+jge .hm_yes
+jge .hopid
+jge .hx_bd
+jge .hx_defpath
+jge .hx_he
+jge .hx_path
+jge .hx_pathdone
+jge .hx_pdone
+jge .hxe_d
+jge .join_b
+jge .join_done
+jge .kgd
+jge .lc_scandone
+jge .me_yes
+jge .mm_done
+jge .mm_j1d
+jge .mm_j2d
+jge .n2r_pos
+jge .ng_bld
+jge .ng_cdone
+jge .ng_hostend
+jge .ng_pdone
+jge .ord_endlen
+jge .outr_done
+jge .p_ed
+jge .pc_done
+jge .pcm_done
+jge .pcpd
+jge .pfull
+jge .phd
+jge .pn_pos
+jge .poutd
+jge .psh_done
+jge .rb_ccpd
+jge .rb_cdone
+jge .rb_decd
+jge .rb_draw
+jge .rdd
+jge .read_done
+jge .rf_cpd
+jge .rl_eol
+jge .rl_intdone
+jge .rl_isint
+jge .rrc_done
+jge .rta_cpd
+jge .rta_empty
+jge .slice_done
+jge .ss_done
+jge .to_hd
+jge .ts_cpd
+jge .ts_ctd
+jge .ts_hd
+jge .ts_tagd
+jge .u_2
+jge .u_3
+jge .u_4
+jge .vc_fail
+jge .w1d
+jge .w_flush
+jge .woutd
+jge .xloop
+jge rt_dns
+jl .b64_d1
+jl .b64_d2
+jl .b64_d3
+jl .b64_i
+jl .c2
+jl .cco
+jl .cfin
+jl .chmc
+jl .cs
+jl .dec_2
+jl .dec_3
+jl .dec_store
+jl .dns_fail
+jl .dt_ll
+jl .eof_no
+jl .fill_done
+jl .gb_have
+jl .hg_blbl
+jl .hg_bsp
+jl .hg_cfcp
+jl .hg_cpch
+jl .hg_cpsh
+jl .hgw_host
+jl .hgw_pre
+jl .hgw_suf
+jl .hip
+jl .hm_exact
+jl .hop
+jl .hx_ckhttp
+jl .hx_hoststart
+jl .hz
+jl .lastblk
+jl .mm_cp
+jl .mm_sub
+jl .mm_zt
+jl .ng_fail
+jl .ng_host
+jl .ng_pcopy
+jl .onepad
+jl .ord_lt
+jl .p_cn
+jl .p_cs
+jl .pk_di
+jl .pk_ff
+jl .pk_h
+jl .ps_cm
+jl .ps_cmp
+jl .ps_cpH
+jl .ps_cs
+jl .ps_mgf
+jl .ps_ps
+jl .ps_xor
+jl .psh_cp
+jl .r2_inc
+jl .r2_neg
+jl .r2_shl
+jl .r2_subl
+jl .rb_cdone
+jl .rb_scmp
+jl .read_fail
+jl .res_od
+jl .rev
+jl .rf_rec
+jl .rl_text
+jl .round
+jl .rrc_hdr
+jl .rta_empty
+jl .rv
+jl .u_3ok
+jl .u_bad
+jl .u_mlt
+jl .w0
+jl .w_fail
+jl .xk
+jl .z2_bl_l
+jl .z2_bl_z
+jl .z2_sa_no
+jl .z_si_l
+jl rt_bounds
+jl rt_dns
+jle .cx_n
+jle .he_cpy
+jle .hg_rcp0
+jle .hg_rl
+jle .hx_hrdone
+jle .lc_readdone
+jle .lc_scandone
+jle .ng_rdone
+jle .read_eof
+jle .rrc_err
+jle .ss_done
+jle .u_bad
+jle .z2_bl_done
+jmp .L2
+jmp .ad_aad
+jmp .ad_cmp
+jmp .ad_ct
+jmp .ad_ret
+jmp .ae_aad
+jmp .ae_ct
+jmp .am_ret
+jmp .at_cp
+jmp .at_yd
+jmp .b64_acc
+jmp .b64_i
+jmp .blocks
+jmp .cd_ret
+jmp .cprem
+jmp .cx_loop
+jmp .cx_x
+jmp .dec_cloop
+jmp .dec_cont
+jmp .dec_loop
+jmp .dns_ans
+jmp .dns_c1
+jmp .dns_c2
+jmp .dns_emit
+jmp .dns_ret
+jmp .dq_ans
+jmp .dq_cp
+jmp .dq_dot
+jmp .dq_nl
+jmp .dq_ret
+jmp .dq_rr
+jmp .dq_scan
+jmp .dq_skipq
+jmp .eq_done
+jmp .eq_false
+jmp .eq_loop
+jmp .fill128
+jmp .fill_done
+jmp .finish
+jmp .fs_i
+jmp .fs_j
+jmp .fs_ret
+jmp .he_co
+jmp .he_loop
+jmp .heb1
+jmp .heb3
+jmp .hel_ctx
+jmp .hel_lbl
+jmp .hel_slen
+jmp .hg_fv
+jmp .hg_rcp
+jmp .hg_ret
+jmp .hg_rl
+jmp .hg_rscan
+jmp .hipm
+jmp .hk0done2
+jmp .hkc
+jmp .hm_cmp
+jmp .hm_find
+jmp .hopi
+jmp .hx_bl
+jmp .hx_build
+jmp .hx_cpnh
+jmp .hx_hl
+jmp .hx_hoststart
+jmp .hx_hrd
+jmp .hx_pl
+jmp .hx_ppl
+jmp .hx_reqdone
+jmp .hx_response
+jmp .hx_ret
+jmp .hxe_l
+jmp .hxn_emit
+jmp .join_a
+jmp .join_bl
+jmp .kg
+jmp .lc_read
+jmp .lc_scan
+jmp .me_l
+jmp .mm_copy
+jmp .mm_j1
+jmp .mm_j2
+jmp .mm_outer
+jmp .n2r_copy
+jmp .ng_copy
+jmp .ng_find
+jmp .ng_found
+jmp .ng_hcopy
+jmp .ng_pcopy
+jmp .ng_pdone
+jmp .ng_port
+jmp .ng_read
+jmp .ng_ret
+jmp .onepad
+jmp .ord_done
+jmp .ord_eq
+jmp .ord_loop
+jmp .out_nl
+jmp .outr_loop
+jmp .p_e
+jmp .p_sig
+jmp .pc_loop
+jmp .pcm_loop
+jmp .pcp
+jmp .ph
+jmp .phave
+jmp .pk_ret
+jmp .ploop
+jmp .pn_done
+jmp .pouts
+jmp .ps_ret
+jmp .psh_ext
+jmp .rb_ccp
+jmp .rb_chunk
+jmp .rb_chunked
+jmp .rb_dec
+jmp .rb_find
+jmp .rb_found
+jmp .rb_hex
+jmp .rb_hexadd
+jmp .rb_region
+jmp .rb_search
+jmp .rd
+jmp .read_copy
+jmp .read_loop
+jmp .res_dig
+jmp .res_oct
+jmp .rf_adv
+jmp .rf_cp
+jmp .rf_parse
+jmp .rf_scan
+jmp .rl_dloop
+jmp .rl_ploop
+jmp .rl_read
+jmp .rrc_body
+jmp .rrc_ret
+jmp .rta_cp
+jmp .rta_len
+jmp .se_ext
+jmp .se_gn
+jmp .se_ret
+jmp .skn_loop
+jmp .slice_loop
+jmp .ss_loop
+jmp .to_h
+jmp .to_ret
+jmp .ts_cp
+jmp .ts_ct
+jmp .ts_h
+jmp .ts_tag
+jmp .u_md
+jmp .u_write
+jmp .vc_anchor
+jmp .vc_chain
+jmp .vc_ret
+jmp .w1
+jmp .w_copy
+jmp .w_open
+jmp .wout
+jmp .z2_epk_ret
+jmp .z2_sa_ret
+jmp .z2_vo_ret
+jmp .z_add_ret
+jmp .z_dbl_ret
+jmp .z_ev_ret
+jmp .z_fs_done
+jmp fe_mul
+jmp rt_fail
+jmp rt_putnum
+jne .am_no
+jne .b64_d4
+jne .b64_i
+jne .dns_next
+jne .dns_scan
+jne .dq_next
+jne .eq_false
+jne .fs_next
+jne .hg_err
+jne .hg_rct
+jne .hg_rskip
+jne .hm_exact
+jne .hm_no
+jne .hx_ckhttp
+jne .hx_hoststart
+jne .hx_path
+jne .me_no
+jne .ng_bld
+jne .ng_body
+jne .ng_fail
+jne .ng_fnext
+jne .p_ec
+jne .pk_fail
+jne .ps_fail
+jne .rb_draw
+jne .rb_fn
+jne .rb_hok
+jne .rb_snext
+jne .rf_ct
+jne .rl_chkdig
+jne .se_gnn
+jne .se_skip
+jne .z2_epk_no
+jne .z2_sa_rsa
+jne .z_be_no
+jne rt_dns
+jne rt_mapfail
+jne rt_ordfault
+jns .r2_cmp
+jns .z_bg_l
+jns .z_me_l
+jns .z_pm_l
+jnz .ad_ap
+jnz .ad_cp
+jnz .ad_fail
+jnz .ae_ap
+jnz .ae_cp
+jnz .asr_keep
+jnz .cpinit
+jnz .cround
+jnz .eq_reg
+jnz .fill_done
+jnz .hx_pdef
+jnz .hxn_conv
+jnz .hxn_l
+jnz .inv1
+jnz .inv2
+jnz .inv3
+jnz .inv4
+jnz .inv5
+jnz .inv6
+jnz .inv7
+jnz .inv8
+jnz .lc_ret
+jnz .mx_loop
+jnz .n2r_loop
+jnz .ni
+jnz .ord_reg
+jnz .out_reg
+jnz .pn_loop
+jnz .pn_nz
+jnz .r2_dbl
+jnz .r2_sub
+jnz .se_yes
+jnz .w_append
+jnz .z2_vo_fail
+jnz .z_ba_l
+jnz .z_be_l
+jnz .z_bs_l
+jnz .z_bz_l
+jnz .z_bz_no
+jnz .z_ev_bad
+jnz .z_pi_done
+js .dns_cfail
+js .dns_fail
+js .fs_no
+js .hx_fail
+js .lc_ret
+js .ng_cfail
+js .ng_fail
+js .vc_leaf
+jz .ad_apd
+jz .ad_cpd
+jz .ae_apd
+jz .ae_cpd
+jz .am_no
+jz .cx_done
+jz .dec_store
+jz .dns_fail
+jz .dns_last
+jz .dq_fail
+jz .dq_nld
+jz .dq_sqd
+jz .he_done
+jz .hel_slend
+jz .hg_err
+jz .hg_rdone
+jz .hm_no
+jz .hx_cpnhd
+jz .hx_fail
+jz .hx_httptr
+jz .hx_nobody
+jz .lc_scandone
+jz .mx_nomul
+jz .n2r_done
+jz .n2r_nosign
+jz .ng_fail
+jz .ng_hdone
+jz .p_ec
+jz .pfinal
+jz .pn_nosign
+jz .rb_cdone
+jz .res_end
+jz .rl_intret
+jz .rl_text
+jz .skn_zero
+jz .to_fail
+jz .vc_anchor_next
+jz .vc_fail
+jz .z2_epk_no
+jz .z2_sa_no
+jz .z2_sa_rsa
+jz .z2_vo_fail
+jz .z_add_general
+jz .z_add_go
+jz .z_add_inf
+jz .z_add_p_ok
+jz .z_dbl_go
+jz .z_ev_cmp
+jz .z_ev_e_ok
+jz .z_fa_done
+jz .z_fs_borrow
+jz .z_me_skip
+jz .z_pm_skip
+jz rt_regfault
+lea r10, [r12+rbx]
+lea r10, [r14+5]
+lea r10, [r15+1]
+lea r10, [r8+r9]
+lea r10, [rdi+9]
+lea r11, [r15+r10]
+lea r11, [rdi+12]
+lea r13, [rax+4]
+lea r13, [rip+aead_ct]
+lea r13, [rip+https_resp]
+lea r13, [rip+hx_resp]
+lea r13, [rip+mm_t]
+lea r13, [rip+nethost]
+lea r13, [rip+xs_k]
+lea r14, [r15 + 25]
+lea r14, [rax+5]
+lea r14, [rcx+4]
+lea r14, [rip+ca_pem_buf]
+lea r15, [r8+r9]
+lea r15, [rcx+4]
+lea r15, [rip+ch_buf]
+lea r15, [rip+k0buf]
+lea r8, [r12+r14]
+lea r8, [r14+5]
+lea r8, [r8+r8*4]
+lea r8, [rcx+rax]
+lea r8, [rdi+2]
+lea r8, [rip+cfin_msg]
+lea r8, [rip+cfin_vd]
+lea r8, [rip+cfk_buf]
+lea r8, [rip+client_pub]
+lea r8, [rip+dns_addr]
+lea r8, [rip+dnsr]
+lea r8, [rip+filebuf]
+lea r8, [rip+fin_exp]
+lea r8, [rip+hexbuf]
+lea r8, [rip+hx_dechunk]
+lea r8, [rip+ks_cap]
+lea r8, [rip+ks_capiv]
+lea r8, [rip+ks_capkey]
+lea r8, [rip+ks_chs]
+lea r8, [rip+ks_civ]
+lea r8, [rip+ks_ckey]
+lea r8, [rip+ks_der2]
+lea r8, [rip+ks_derived]
+lea r8, [rip+ks_early]
+lea r8, [rip+ks_hs]
+lea r8, [rip+ks_master]
+lea r8, [rip+ks_sap]
+lea r8, [rip+ks_sapiv]
+lea r8, [rip+ks_sapkey]
+lea r8, [rip+ks_shs]
+lea r8, [rip+ks_siv]
+lea r8, [rip+ks_skey]
+lea r8, [rip+linebuf]
+lea r8, [rip+nethost]
+lea r8, [rip+pathbuf]
+lea r8, [rip+sfk_buf]
+lea r8, [rip+t_s]
+lea r8, [rip+tls_inner]
+lea r8, [rip+tprev]
+lea r9, [r15+1]
+lea r9, [rip+aead_ct]
+lea r9, [rip+hexchars]
+lea r9, [rip+hx_req]
+lea r9, [rip+netsa]
+lea r9, [rip+transcript]
+lea rax, [r15+17]
+lea rax, [rbx+7]
+lea rax, [rcx+4]
+lea rax, [rcx+6]
+lea rax, [rdx+1]
+lea rax, [rip+ca_pem_buf]
+lea rax, [rip+dns_query]
+lea rax, [rip+h]
+lea rax, [rip+h_init]
+lea rax, [rip+hkl_buf]
+lea rax, [rip+hx_numbuf+32]
+lea rax, [rip+inner]
+lea rax, [rip+litpool]
+lea rax, [rip+p256_n]
+lea rax, [rip+p256_p]
+lea rax, [rip+p256_r2n]
+lea rax, [rip+p256_r2p]
+lea rax, [rsp+16]
+lea rbp, [r8+r9]
+lea rbp, [rip+chacha_state]
+lea rbp, [rip+h]
+lea rbx, [rip+ca_der_buf]
+lea rbx, [rip+db]
+lea rbx, [rip+dnsq]
+lea rbx, [rip+dnssa]
+lea rbx, [rip+h]
+lea rbx, [rip+hmac_in]
+lea rbx, [rip+hmac_out]
+lea rbx, [rip+hx_host]
+lea rbx, [rip+hx_numbuf+32]
+lea rbx, [rip+hx_path]
+lea rbx, [rip+linebuf]
+lea rbx, [rip+nethost]
+lea rbx, [rip+netreq]
+lea rbx, [rip+netsa]
+lea rbx, [rip+numscratch]
+lea rcx, [rcx+rcx*4]
+lea rcx, [rdi+38]
+lea rcx, [rdi+4]
+lea rcx, [rip+aead_ks]
+lea rcx, [rip+aead_tag]
+lea rcx, [rip+cv_content]
+lea rcx, [rip+inbuf]
+lea rcx, [rip+linebuf]
+lea rcx, [rip+litpool_end]
+lea rcx, [rip+rec_buf]
+lea rcx, [rip+sess_id]
+lea rcx, [rip+t_r]
+lea rcx, [rsi+12]
+lea rdi, [r12+512]
+lea rdi, [r12+rbx]
+lea rdi, [r8+1]
+lea rdi, [rbx + r14]
+lea rdi, [rbx+256]
+lea rdi, [rbx+512]
+lea rdi, [rip+aead_mac]
+lea rdi, [rip+aead_otk]
+lea rdi, [rip+ca_anchors]
+lea rdi, [rip+ca_path]
+lea rdi, [rip+cert_ptrs]
+lea rdi, [rip+cfin_msg]
+lea rdi, [rip+cfk_buf]
+lea rdi, [rip+client_priv]
+lea rdi, [rip+client_pub]
+lea rdi, [rip+client_random]
+lea rdi, [rip+conn_addr]
+lea rdi, [rip+cv_content]
+lea rdi, [rip+cv_sig_le]
+lea rdi, [rip+dbmask]
+lea rdi, [rip+dns_query]
+lea rdi, [rip+e_mul_t]
+lea rdi, [rip+ec_e]
+lea rdi, [rip+em_be+223]
+lea rdi, [rip+em_be]
+lea rdi, [rip+err_bounds]
+lea rdi, [rip+err_char]
+lea rdi, [rip+err_contract]
+lea rdi, [rip+err_div]
+lea rdi, [rip+err_map]
+lea rdi, [rip+err_num]
+lea rdi, [rip+err_oom]
+lea rdi, [rip+err_ordcmp]
+lea rdi, [rip+err_overflow]
+lea rdi, [rip+err_region]
+lea rdi, [rip+err_shift]
+lea rdi, [rip+err_wrlit]
+lea rdi, [rip+ev_G+256]
+lea rdi, [rip+ev_G+512]
+lea rdi, [rip+ev_G]
+lea rdi, [rip+ev_Q+256]
+lea rdi, [rip+ev_Q+512]
+lea rdi, [rip+ev_Q]
+lea rdi, [rip+ev_R+512]
+lea rdi, [rip+ev_R1]
+lea rdi, [rip+ev_R2]
+lea rdi, [rip+ev_R]
+lea rdi, [rip+ev_xy]
+lea rdi, [rip+expand_msg]
+lea rdi, [rip+fin_exp]
+lea rdi, [rip+flight_buf]
+lea rdi, [rip+hkl_buf]
+lea rdi, [rip+http_req_buf]
+lea rdi, [rip+https_resp]
+lea rdi, [rip+hx_dechunk]
+lea rdi, [rip+hx_host]
+lea rdi, [rip+inv_t0]
+lea rdi, [rip+inv_z11]
+lea rdi, [rip+inv_z2]
+lea rdi, [rip+inv_z2_100_0]
+lea rdi, [rip+inv_z2_10_0]
+lea rdi, [rip+inv_z2_20_0]
+lea rdi, [rip+inv_z2_50_0]
+lea rdi, [rip+inv_z2_5_0]
+lea rdi, [rip+inv_z9]
+lea rdi, [rip+ks_cap]
+lea rdi, [rip+ks_capkey]
+lea rdi, [rip+ks_chs]
+lea rdi, [rip+ks_ckey]
+lea rdi, [rip+ks_der2]
+lea rdi, [rip+ks_derived]
+lea rdi, [rip+ks_early]
+lea rdi, [rip+ks_hs]
+lea rdi, [rip+ks_master]
+lea rdi, [rip+ks_sap]
+lea rdi, [rip+ks_sapkey]
+lea rdi, [rip+ks_shs]
+lea rdi, [rip+ks_skey]
+lea rdi, [rip+leaf_n_le]
+lea rdi, [rip+mgf_in]
+lea rdi, [rip+mm_tmp]
+lea rdi, [rip+mprime]
+lea rdi, [rip+mx_acc]
+lea rdi, [rip+mx_smont]
+lea rdi, [rip+nethost]
+lea rdi, [rip+p256_n]
+lea rdi, [rip+p256_p]
+lea rdi, [rip+padbuf]
+lea rdi, [rip+pathbuf]
+lea rdi, [rip+poly_pad]
+lea rdi, [rip+rec_buf+5]
+lea rdi, [rip+rsa_em]
+lea rdi, [rip+rsa_mhash]
+lea rdi, [rip+server_pub]
+lea rdi, [rip+sess_id]
+lea rdi, [rip+sfk_buf]
+lea rdi, [rip+sha256_di]
+lea rdi, [rip+shared_sec]
+lea rdi, [rip+t_qx]
+lea rdi, [rip+t_qy]
+lea rdi, [rip+t_r]
+lea rdi, [rip+t_s]
+lea rdi, [rip+tls_hdr]
+lea rdi, [rip+tls_inner]
+lea rdi, [rip+tls_nonce]
+lea rdi, [rip+tls_rec]
+lea rdi, [rip+transcript]
+lea rdi, [rip+v_e]
+lea rdi, [rip+v_u1]
+lea rdi, [rip+v_u2]
+lea rdi, [rip+v_w]
+lea rdi, [rip+vc_issuer_key]
+lea rdi, [rip+vc_sig_le]
+lea rdi, [rip+w]
+lea rdi, [rip+x_n_be]
+lea rdi, [rip+x_sig_be]
+lea rdi, [rip+xs_AA]
+lea rdi, [rip+xs_A]
+lea rdi, [rip+xs_BB]
+lea rdi, [rip+xs_B]
+lea rdi, [rip+xs_CB]
+lea rdi, [rip+xs_C]
+lea rdi, [rip+xs_DA]
+lea rdi, [rip+xs_D]
+lea rdi, [rip+xs_E]
+lea rdi, [rip+xs_t1]
+lea rdi, [rip+xs_t2]
+lea rdi, [rip+xs_x1]
+lea rdi, [rip+xs_x2]
+lea rdi, [rip+xs_x3]
+lea rdi, [rip+xs_z2]
+lea rdi, [rip+xs_z3]
+lea rdi, [rip+zeros32]
+lea rdi,[r12+512]
+lea rdi,[r13+512]
+lea rdi,[rbx+256]
+lea rdi,[rbx+512]
+lea rdi,[rip+a_X3]
+lea rdi,[rip+a_Y3]
+lea rdi,[rip+a_Z3]
+lea rdi,[rip+a_h2]
+lea rdi,[rip+a_h]
+lea rdi,[rip+a_i]
+lea rdi,[rip+a_j]
+lea rdi,[rip+a_r2]
+lea rdi,[rip+a_r]
+lea rdi,[rip+a_s1]
+lea rdi,[rip+a_s2]
+lea rdi,[rip+a_t1]
+lea rdi,[rip+a_u1]
+lea rdi,[rip+a_u2]
+lea rdi,[rip+a_v]
+lea rdi,[rip+a_z1z1]
+lea rdi,[rip+a_z1z2]
+lea rdi,[rip+a_z2z2]
+lea rdi,[rip+a_zsq]
+lea rdi,[rip+aff_z2i]
+lea rdi,[rip+aff_z3i]
+lea rdi,[rip+aff_zinv]
+lea rdi,[rip+d_X3]
+lea rdi,[rip+d_Y3]
+lea rdi,[rip+d_Z3]
+lea rdi,[rip+d_a2]
+lea rdi,[rip+d_alpha]
+lea rdi,[rip+d_beta2]
+lea rdi,[rip+d_beta4]
+lea rdi,[rip+d_beta8]
+lea rdi,[rip+d_beta]
+lea rdi,[rip+d_delta]
+lea rdi,[rip+d_g2]
+lea rdi,[rip+d_gamma]
+lea rdi,[rip+d_t1]
+lea rdi,[rip+d_t2]
+lea rdi,[rip+d_t3]
+lea rdi,[rip+d_yz2]
+lea rdi,[rip+d_yz]
+lea rdx, [rbp+3]
+lea rdx, [rbp+5]
+lea rdx, [rcx+1]
+lea rdx, [rcx+2]
+lea rdx, [rcx+3]
+lea rdx, [rcx+4]
+lea rdx, [rcx-65]
+lea rdx, [rcx-71]
+lea rdx, [rip+aead_otk]
+lea rdx, [rip+basepoint9]
+lea rdx, [rip+client_random]
+lea rdx, [rip+cv_content+98]
+lea rdx, [rip+cv_r2]
+lea rdx, [rip+dbmask]
+lea rdx, [rip+ec_e]
+lea rdx, [rip+ec_hash]
+lea rdx, [rip+ev_G]
+lea rdx, [rip+ev_Q]
+lea rdx, [rip+ev_R2]
+lea rdx, [rip+exp_nm2]
+lea rdx, [rip+expand_msg]
+lea rdx, [rip+fin_th]
+lea rdx, [rip+http_req_buf]
+lea rdx, [rip+hx_req]
+lea rdx, [rip+inner]
+lea rdx, [rip+inv_z11]
+lea rdx, [rip+inv_z2]
+lea rdx, [rip+inv_z2_100_0]
+lea rdx, [rip+inv_z2_10_0]
+lea rdx, [rip+inv_z2_20_0]
+lea rdx, [rip+inv_z2_50_0]
+lea rdx, [rip+inv_z2_5_0]
+lea rdx, [rip+inv_z9]
+lea rdx, [rip+ks_empty]
+lea rdx, [rip+ks_th]
+lea rdx, [rip+litpool]
+lea rdx, [rip+mx_acc]
+lea rdx, [rip+mx_one]
+lea rdx, [rip+mx_smont]
+lea rdx, [rip+netsa]
+lea rdx, [rip+p256_n]
+lea rdx, [rip+pem_begin]
+lea rdx, [rip+pem_end]
+lea rdx, [rip+rsa_hprime]
+lea rdx, [rip+rsa_mhash]
+lea rdx, [rip+server_pub]
+lea rdx, [rip+shared_sec]
+lea rdx, [rip+th_sf]
+lea rdx, [rip+tls_hdr]
+lea rdx, [rip+v_w]
+lea rdx, [rip+vc_r2]
+lea rdx, [rip+xs_A]
+lea rdx, [rip+xs_BB]
+lea rdx, [rip+xs_B]
+lea rdx, [rip+xs_CB]
+lea rdx, [rip+xs_t1]
+lea rdx, [rip+xs_t2]
+lea rdx, [rip+xs_x1]
+lea rdx, [rip+xs_x3]
+lea rdx, [rip+xs_z2]
+lea rdx, [rip+xs_z3]
+lea rdx, [rip+zeros32]
+lea rdx,[r12+512]
+lea rdx,[r13+512]
+lea rdx,[rip+a_X3]
+lea rdx,[rip+a_h2]
+lea rdx,[rip+a_h]
+lea rdx,[rip+a_i]
+lea rdx,[rip+a_j]
+lea rdx,[rip+a_r]
+lea rdx,[rip+a_s1]
+lea rdx,[rip+a_t1]
+lea rdx,[rip+a_u1]
+lea rdx,[rip+a_v]
+lea rdx,[rip+a_z1z1]
+lea rdx,[rip+a_z1z2]
+lea rdx,[rip+a_z2z2]
+lea rdx,[rip+aff_z2i]
+lea rdx,[rip+aff_z3i]
+lea rdx,[rip+aff_zinv]
+lea rdx,[rip+d_X3]
+lea rdx,[rip+d_alpha]
+lea rdx,[rip+d_beta2]
+lea rdx,[rip+d_beta4]
+lea rdx,[rip+d_beta8]
+lea rdx,[rip+d_beta]
+lea rdx,[rip+d_delta]
+lea rdx,[rip+d_g2]
+lea rdx,[rip+d_gamma]
+lea rdx,[rip+d_t1]
+lea rdx,[rip+d_t2]
+lea rdx,[rip+d_t3]
+lea rdx,[rip+d_yz]
+lea rdx,[rip+exp_pm2]
+lea rsi, [r12+10]
+lea rsi, [r12+256]
+lea rsi, [r12+2]
+lea rsi, [r12+4]
+lea rsi, [r12+512]
+lea rsi, [r12+6]
+lea rsi, [r12+8]
+lea rsi, [r12+r13]
+lea rsi, [r12+r14]
+lea rsi, [r12+rbx]
+lea rsi, [r13+64]
+lea rsi, [r8+1]
+lea rsi, [r8+2]
+lea rsi, [r8+34]
+lea rsi, [r8+r9]
+lea rsi, [rbx + r12 + 1]
+lea rsi, [rcx+8]
+lea rsi, [rdi+2]
+lea rsi, [rip+aead_ct]
+lea rsi, [rip+aead_ks]
+lea rsi, [rip+aead_mac]
+lea rsi, [rip+aead_tag]
+lea rsi, [rip+at_line]
+lea rsi, [rip+ca_pem_buf]
+lea rsi, [rip+ccs_bytes]
+lea rsi, [rip+cfin_vd]
+lea rsi, [rip+ch_buf+5]
+lea rsi, [rip+ch_buf]
+lea rsi, [rip+chacha_orig]
+lea rsi, [rip+client_priv]
+lea rsi, [rip+conn_addr]
+lea rsi, [rip+cv_label]
+lea rsi, [rip+cv_r2]
+lea rsi, [rip+cv_sig_le]
+lea rsi, [rip+db+191]
+lea rsi, [rip+dns_query]
+lea rsi, [rip+dns_resp]
+lea rsi, [rip+dnsq]
+lea rsi, [rip+dnsr]
+lea rsi, [rip+dnssa]
+lea rsi, [rip+e_mul_t]
+lea rsi, [rip+ec_hash]
+lea rsi, [rip+ecdsa_sha256_oid]
+lea rsi, [rip+ecpub_oid]
+lea rsi, [rip+em_be+223]
+lea rsi, [rip+em_be]
+lea rsi, [rip+err_prefix]
+lea rsi, [rip+ev_R1]
+lea rsi, [rip+ev_R]
+lea rsi, [rip+ev_xy]
+lea rsi, [rip+ext_fixed]
+lea rsi, [rip+filebuf]
+lea rsi, [rip+h]
+lea rsi, [rip+hexbuf]
+lea rsi, [rip+hkl_buf]
+lea rsi, [rip+http_a]
+lea rsi, [rip+http_b]
+lea rsi, [rip+http_pre]
+lea rsi, [rip+http_suf]
+lea rsi, [rip+hx_chunked]
+lea rsi, [rip+hx_crlf2]
+lea rsi, [rip+hx_crlf]
+lea rsi, [rip+hx_host]
+lea rsi, [rip+hx_lit_clen]
+lea rsi, [rip+hx_lit_hdrs]
+lea rsi, [rip+hx_lit_http]
+lea rsi, [rip+hx_m_get]
+lea rsi, [rip+hx_path]
+lea rsi, [rip+hx_req]
+lea rsi, [rip+hx_resp]
+lea rsi, [rip+hx_sp]
+lea rsi, [rip+inbuf]
+lea rsi, [rip+inv_t0]
+lea rsi, [rip+inv_z11]
+lea rsi, [rip+inv_z2]
+lea rsi, [rip+inv_z2_100_0]
+lea rsi, [rip+inv_z2_10_0]
+lea rsi, [rip+inv_z2_20_0]
+lea rsi, [rip+inv_z2_50_0]
+lea rsi, [rip+inv_z2_5_0]
+lea rsi, [rip+inv_z9]
+lea rsi, [rip+k256]
+lea rsi, [rip+ks_capiv]
+lea rsi, [rip+ks_civ]
+lea rsi, [rip+ks_sapiv]
+lea rsi, [rip+ks_siv]
+lea rsi, [rip+lbl_cap]
+lea rsi, [rip+lbl_chs]
+lea rsi, [rip+lbl_derived]
+lea rsi, [rip+lbl_finished]
+lea rsi, [rip+lbl_iv]
+lea rsi, [rip+lbl_key]
+lea rsi, [rip+lbl_sap]
+lea rsi, [rip+lbl_shs]
+lea rsi, [rip+litpool]
+lea rsi, [rip+mx_acc]
+lea rsi, [rip+mx_one]
+lea rsi, [rip+nethost]
+lea rsi, [rip+netreq]
+lea rsi, [rip+netsa]
+lea rsi, [rip+nl]
+lea rsi, [rip+nl_msg]
+lea rsi, [rip+numscratch]
+lea rsi, [rip+p256_curve_oid]
+lea rsi, [rip+p256_gx]
+lea rsi, [rip+p256_gy]
+lea rsi, [rip+p256_n]
+lea rsi, [rip+p256_one]
+lea rsi, [rip+padbuf+64]
+lea rsi, [rip+poly_w]
+lea rsi, [rip+rec_buf+5]
+lea rsi, [rip+rec_buf]
+lea rsi, [rip+rsa_em]
+lea rsi, [rip+rsa_hprime]
+lea rsi, [rip+rsa_mhash]
+lea rsi, [rip+rsa_oid]
+lea rsi, [rip+rsadsi_prefix]
+lea rsi, [rip+t_qy]
+lea rsi, [rip+tls_hdr]
+lea rsi, [rip+tls_nonce]
+lea rsi, [rip+tls_rec]
+lea rsi, [rip+tprev]
+lea rsi, [rip+utf8buf]
+lea rsi, [rip+v_e]
+lea rsi, [rip+v_u1]
+lea rsi, [rip+v_u2]
+lea rsi, [rip+vc_r2]
+lea rsi, [rip+vc_sig_le]
+lea rsi, [rip+x_n_be]
+lea rsi, [rip+x_sig_be]
+lea rsi, [rip+xs_AA]
+lea rsi, [rip+xs_A]
+lea rsi, [rip+xs_B]
+lea rsi, [rip+xs_C]
+lea rsi, [rip+xs_DA]
+lea rsi, [rip+xs_D]
+lea rsi, [rip+xs_E]
+lea rsi, [rip+xs_t1]
+lea rsi, [rip+xs_t2]
+lea rsi, [rip+xs_x1]
+lea rsi, [rip+xs_x2]
+lea rsi, [rip+xs_x3]
+lea rsi, [rip+xs_z2]
+lea rsi,[r12+0]
+lea rsi,[r12+256]
+lea rsi,[r12+512]
+lea rsi,[r13+0]
+lea rsi,[r13+256]
+lea rsi,[r13+512]
+lea rsi,[rip+a_X3]
+lea rsi,[rip+a_Y3]
+lea rsi,[rip+a_Z3]
+lea rsi,[rip+a_h2]
+lea rsi,[rip+a_h]
+lea rsi,[rip+a_r2]
+lea rsi,[rip+a_r]
+lea rsi,[rip+a_s1]
+lea rsi,[rip+a_s2]
+lea rsi,[rip+a_t1]
+lea rsi,[rip+a_u1]
+lea rsi,[rip+a_u2]
+lea rsi,[rip+a_v]
+lea rsi,[rip+a_z1z2]
+lea rsi,[rip+a_zsq]
+lea rsi,[rip+aff_z2i]
+lea rsi,[rip+aff_zinv]
+lea rsi,[rip+d_X3]
+lea rsi,[rip+d_Y3]
+lea rsi,[rip+d_Z3]
+lea rsi,[rip+d_a2]
+lea rsi,[rip+d_alpha]
+lea rsi,[rip+d_beta2]
+lea rsi,[rip+d_beta4]
+lea rsi,[rip+d_beta]
+lea rsi,[rip+d_g2]
+lea rsi,[rip+d_gamma]
+lea rsi,[rip+d_t1]
+lea rsi,[rip+d_t3]
+lea rsi,[rip+d_yz2]
+lea rsi,[rip+d_yz]
+mov [r10+rdx], al
+mov [r10], r15b
+mov [r11+r9], al
+mov [r11], al
+mov [r12+0], r10
+mov [r12+0], r8
+mov [r12+16], r10
+mov [r12+24], r10
+mov [r12+32], r10
+mov [r12+8], r10
+mov [r12+rcx], al
+mov [r13 + 248], rax
+mov [r13 + 256], rax
+mov [r13 + 264], rdx
+mov [r13 + rcx*8 - 8], rax
+mov [r13 + rcx*8], rax
+mov [r13+rcx], al
+mov [r13+rcx], eax
+mov [r14 + rcx*4], edx
+mov [r14+r15], al
+mov [r15+3], cl
+mov [r15+4], al
+mov [r15+7], cl
+mov [r15+8], al
+mov [r15+r10+1], al
+mov [r15+r10], cl
+mov [r15+r10], dl
+mov [r15+r11-1], al
+mov [r15+r11-2], cl
+mov [r15+rcx], al
+mov [r15+rcx], dl
+mov [r8 + r9], al
+mov [r8 + rcx], al
+mov [r8+rcx*2+1], dl
+mov [r8+rcx*2], dl
+mov [r9 + rcx*8 + 8], rax
+mov [r9+4], al
+mov [r9+5], al
+mov [r9+6], al
+mov [r9+7], al
+mov [r9+rcx], al
+mov [rax + rcx*8 + 8], r8
+mov [rax], r12
+mov [rax], rdx
+mov [rbp + rcx*4], eax
+mov [rbp - 8], rax
+mov [rbp+16], rax
+mov [rbp+24], rax
+mov [rbp+32], rax
+mov [rbp+40], rax
+mov [rbp+48], esi
+mov [rbp+52], eax
+mov [rbp+56], eax
+mov [rbp+60], eax
+mov [rbp+r10], eax
+mov [rbp+r11], edx
+mov [rbp+r8], eax
+mov [rbp+r9], edx
+mov [rbp+rcx], dl
+mov [rbx + r12], al
+mov [rbx + r12], cl
+mov [rbx + r12], dl
+mov [rbx + r14], al
+mov [rbx + r14], dl
+mov [rbx + r9*8 + 8], rax
+mov [rbx + rcx*8 + 8], rax
+mov [rbx + rcx*8 + 8], rdx
+mov [rbx+2], dl
+mov [rbx+3], al
+mov [rbx+64+rcx], al
+mov [rbx+64+rcx], dl
+mov [rbx+r15], al
+mov [rbx+rcx*8], rax
+mov [rbx+rcx], al
+mov [rbx], dl
+mov [rbx], edx
+mov [rbx], r13
+mov [rbx], r14
+mov [rbx], r9
+mov [rbx], rcx
+mov [rcx + r12], al
+mov [rdi + r9*8], rdx
+mov [rdi + rcx*4], eax
+mov [rdi + rcx*8], rax
+mov [rdi + rcx], al
+mov [rdi + rdx], al
+mov [rdi+0], al
+mov [rdi+0], r8
+mov [rdi+0], rax
+mov [rdi+120], rax
+mov [rdi+16], r10
+mov [rdi+16], rax
+mov [rdi+1], al
+mov [rdi+24], r11
+mov [rdi+24], rax
+mov [rdi+2], al
+mov [rdi+2], cl
+mov [rdi+32], r12
+mov [rdi+32], rax
+mov [rdi+35], r13b
+mov [rdi+3], al
+mov [rdi+3], cl
+mov [rdi+4], al
+mov [rdi+4], eax
+mov [rdi+56], rax
+mov [rdi+8], eax
+mov [rdi+8], r9
+mov [rdi+8], rax
+mov [rdi+9+rdx], al
+mov [rdi+r10], al
+mov [rdi+r10], rax
+mov [rdi+r11], al
+mov [rdi+r14], al
+mov [rdi+r15], al
+mov [rdi+r8], al
+mov [rdi+r9], al
+mov [rdi+rcx*8], rax
+mov [rdi+rcx+40], al
+mov [rdi+rcx+4], al
+mov [rdi+rcx+64], al
+mov [rdi+rcx+8], al
+mov [rdi+rcx], al
+mov [rdi+rcx], bl
+mov [rdi+rcx], rax
+mov [rdi+rdx+8], rax
+mov [rdi+rdx], al
+mov [rdi+rdx], rbx
+mov [rdi], rax
+mov [rdx + r10 + 4], r11b
+mov [rdx+rcx], r8
+mov [rip+arena_ptr], r10
+mov [rip+arena_ptr], rax
+mov [rip+argc_val], rax
+mov [rip+argv_ptr], rax
+mov [rip+ca_count], rbp
+mov [rip+cert_count], r9
+mov [rip+cert_msg_len], r13
+mov [rip+cert_msg_ptr], rdi
+mov [rip+cert_tlen], rax
+mov [rip+ch_extpos], r10
+mov [rip+conn_fd], rax
+mov [rip+conn_port], rdi
+mov [rip+cur_mod], rax
+mov [rip+cur_n0], rax
+mov [rip+cur_r2], rax
+mov [rip+cv_msg_len], r13
+mov [rip+cv_msg_ptr], rdi
+mov [rip+dt_d], rbx
+mov [rip+dt_days], rax
+mov [rip+dt_doe], rdx
+mov [rip+dt_doy], rax
+mov [rip+dt_era], rax
+mov [rip+dt_h], rax
+mov [rip+dt_mi], rax
+mov [rip+dt_mo], rax
+mov [rip+dt_mp], rax
+mov [rip+dt_na], rax
+mov [rip+dt_nb], rax
+mov [rip+dt_now], rax
+mov [rip+dt_s], rdx
+mov [rip+dt_y], rax
+mov [rip+dt_yoe], rax
+mov [rip+e_n0n], rax
+mov [rip+e_n0p], rax
+mov [rip+ev_Qx], rdi
+mov [rip+ev_Qy], rsi
+mov [rip+ev_e], rdx
+mov [rip+ev_r], rcx
+mov [rip+ev_s], r8
+mov [rip+fe_rr+0], r8
+mov [rip+fe_rr+0], rax
+mov [rip+fe_rr+16], r8
+mov [rip+fe_rr+16], rax
+mov [rip+fe_rr+24], r9
+mov [rip+fe_rr+24], rdx
+mov [rip+fe_rr+32], r8
+mov [rip+fe_rr+32], rax
+mov [rip+fe_rr+40], r9
+mov [rip+fe_rr+40], rdx
+mov [rip+fe_rr+48], r8
+mov [rip+fe_rr+48], rax
+mov [rip+fe_rr+56], r9
+mov [rip+fe_rr+56], rdx
+mov [rip+fe_rr+64], r8
+mov [rip+fe_rr+64], rax
+mov [rip+fe_rr+72], r9
+mov [rip+fe_rr+72], rdx
+mov [rip+fe_rr+8], r9
+mov [rip+fe_rr+8], rdx
+mov [rip+fe_s19+0], rax
+mov [rip+fe_s19+16], rax
+mov [rip+fe_s19+24], rax
+mov [rip+fe_s19+8], rax
+mov [rip+flen], r14
+mov [rip+fpos], rax
+mov [rip+hg_host], rdi
+mov [rip+hg_hostlen], rsi
+mov [rip+hg_req_len], rcx
+mov [rip+hg_req_ptr], rdx
+mov [rip+hx_body], rcx
+mov [rip+hx_bodylen], r15
+mov [rip+hx_bodyptr], r8
+mov [rip+hx_cur], r8
+mov [rip+hx_hostlen], r15
+mov [rip+hx_method_len], rdx
+mov [rip+hx_method_ptr], rsi
+mov [rip+hx_pathlen], r15
+mov [rip+hx_port], r8
+mov [rip+hx_scheme], r14
+mov [rip+inbuf_len], rax
+mov [rip+inbuf_pos], r10
+mov [rip+litpool_top], rax
+mov [rip+mm_n0inv], r8
+mov [rip+mm_out], rdi
+mov [rip+poly_d+0], rcx
+mov [rip+poly_d+16], rcx
+mov [rip+poly_d+24], rcx
+mov [rip+poly_d+32], rcx
+mov [rip+poly_d+8], rcx
+mov [rip+poly_g+0], rax
+mov [rip+poly_g+16], rax
+mov [rip+poly_g+24], rax
+mov [rip+poly_g+32], rax
+mov [rip+poly_g+8], rax
+mov [rip+poly_h+0], r8
+mov [rip+poly_h+16], r10
+mov [rip+poly_h+16], r8
+mov [rip+poly_h+24], r11
+mov [rip+poly_h+24], r8
+mov [rip+poly_h+32], r12
+mov [rip+poly_h+32], r8
+mov [rip+poly_h+8], r8
+mov [rip+poly_h+8], r9
+mov [rip+poly_r+0], r8
+mov [rip+poly_r+16], r8
+mov [rip+poly_r+24], r8
+mov [rip+poly_r+32], r8
+mov [rip+poly_r+8], r8
+mov [rip+poly_s+0], r8
+mov [rip+poly_s+16], r8
+mov [rip+poly_s+24], r8
+mov [rip+poly_s+8], r8
+mov [rip+poly_w+0], rax
+mov [rip+poly_w+16], rax
+mov [rip+poly_w+24], rax
+mov [rip+poly_w+8], rax
+mov [rip+resolved_ip+0], al
+mov [rip+resolved_ip+1], al
+mov [rip+resolved_ip+2], al
+mov [rip+resolved_ip+3], al
+mov [rip+resp_len], rbp
+mov [rip+se_gnnext], r10
+mov [rip+se_hostlen], rsi
+mov [rip+sfin_len], r13
+mov [rip+sfin_ptr], rdi
+mov [rip+tlen], r8
+mov [rip+tlen], rdx
+mov [rip+vc_anchor_ptr], rdi
+mov [rip+vc_count], rsi
+mov [rip+vc_host], rdx
+mov [rip+vc_hostlen], rcx
+mov [rip+vc_tbs_len], rax
+mov [rip+vc_tbs_ptr], rax
+mov [rip+vc_want_iss_len], rax
+mov [rip+vc_want_iss_ptr], rax
+mov [rip+x_e], rax
+mov [rip+x_ext_ptr], r10
+mov [rip+x_issuer_len], rax
+mov [rip+x_issuer_ptr], rdi
+mov [rip+x_subject_len], rax
+mov [rip+x_subject_ptr], rdi
+mov [rip+x_tbs_len], rax
+mov [rip+x_tbs_ptr], rbx
+mov [rip+x_val_ptr], rdi
+mov [rip+xs_swap], r15
+mov [rsi+1], bl
+mov [rsi+2], bl
+mov [rsi+3], bl
+mov [rsi+rcx], eax
+mov [rsi+rcx], rax
+mov [rsi], al
+mov [rsi], bl
+mov al, 0x20
+mov al, [r12 + rcx]
+mov al, [r12+rcx]
+mov al, [r13+rcx]
+mov al, [r13+rdx]
+mov al, [r14+rcx]
+mov al, [r14+rdx]
+mov al, [r15+rcx]
+mov al, [r8+rdi+10]
+mov al, [r8+rdi+11]
+mov al, [r8+rdi+12]
+mov al, [r8+rdi+13]
+mov al, [rbx+rcx]
+mov al, [rcx+10]
+mov al, [rcx+11]
+mov al, [rcx+12]
+mov al, [rcx+13]
+mov al, [rdi+r8]
+mov al, [rdi+rcx]
+mov al, [rip+hkdf_ctr]
+mov al, [rsi + rcx]
+mov al, [rsi+r8]
+mov al, [rsi+r9]
+mov al, [rsi+rbx]
+mov al, [rsi+rcx]
+mov byte ptr [r11+1], 1
+mov byte ptr [r11+2], 0
+mov byte ptr [r11+3], 1
+mov byte ptr [r11], 0
+mov byte ptr [r15+0], 0x16
+mov byte ptr [r15+1], 0x03
+mov byte ptr [r15+2], 0x01
+mov byte ptr [r15+6], 0
+mov byte ptr [r8 + r9], 0
+mov byte ptr [rbx + r12], 0
+mov byte ptr [rbx + r12], 45
+mov byte ptr [rbx + r14], 0
+mov byte ptr [rbx + r14], 47
+mov byte ptr [rbx+0], 71
+mov byte ptr [rbx+1], 69
+mov byte ptr [rbx+2], 0
+mov byte ptr [rbx+2], 84
+mov byte ptr [rbx+3], 0x35
+mov byte ptr [rbx+3], 32
+mov byte ptr [rbx+4], 8
+mov byte ptr [rbx+5], 8
+mov byte ptr [rbx+6], 8
+mov byte ptr [rbx+7], 8
+mov byte ptr [rbx+r15], 0
+mov byte ptr [rbx], 47
+mov byte ptr [rbx], 48
+mov byte ptr [rdi + rcx], 0x80
+mov byte ptr [rdi+0], 0x12
+mov byte ptr [rdi+0], 0x14
+mov byte ptr [rdi+0], 0x17
+mov byte ptr [rdi+0], 2
+mov byte ptr [rdi+10], 0x00
+mov byte ptr [rdi+11], 0x00
+mov byte ptr [rdi+1], 0
+mov byte ptr [rdi+1], 0x00
+mov byte ptr [rdi+1], 0x03
+mov byte ptr [rdi+1], 0x34
+mov byte ptr [rdi+2], 0x00
+mov byte ptr [rdi+2], 0x01
+mov byte ptr [rdi+2], 0x03
+mov byte ptr [rdi+32], 0
+mov byte ptr [rdi+33], 0
+mov byte ptr [rdi+34], 0
+mov byte ptr [rdi+3], 0x00
+mov byte ptr [rdi+3], 0x20
+mov byte ptr [rdi+3], 116
+mov byte ptr [rdi+4], 0x00
+mov byte ptr [rdi+4], 108
+mov byte ptr [rdi+5], 0x01
+mov byte ptr [rdi+5], 115
+mov byte ptr [rdi+6], 0x00
+mov byte ptr [rdi+6], 49
+mov byte ptr [rdi+7], 0x00
+mov byte ptr [rdi+7], 51
+mov byte ptr [rdi+8], 0x00
+mov byte ptr [rdi+8], 32
+mov byte ptr [rdi+97], 0
+mov byte ptr [rdi+9], 0x00
+mov byte ptr [rdi+r10], 0
+mov byte ptr [rdi+rcx], 0
+mov byte ptr [rdi+rcx], 1
+mov byte ptr [rip+hkdf_ctr], 0
+mov byte ptr [rsi], 10
+mov byte ptr [rsi], 48
+mov dl, 0x00
+mov dl, 0x01
+mov dl, 0x02
+mov dl, 0x03
+mov dl, 0x13
+mov dl, 0x20
+mov dl, [r10+rcx]
+mov dl, [rax+rcx]
+mov dl, [rbx+rcx]
+mov dl, [rdi+r8]
+mov dl, [rsi+rcx]
+mov dword ptr [rbp+0], 0x61707865
+mov dword ptr [rbp+12], 0x6b206574
+mov dword ptr [rbp+4], 0x3320646e
+mov dword ptr [rbp+8], 0x79622d32
+mov eax, [r13+8]
+mov eax, [rbp+r10]
+mov eax, [rbp+r8]
+mov eax, [rbp+rcx]
+mov eax, [rdi + rcx*4 - 60]
+mov eax, [rdx+4]
+mov eax, [rdx+8]
+mov eax, [rdx]
+mov eax, [rip+resolved_ip]
+mov eax, [rsi + rcx*4]
+mov eax, [rsi + rcx*8]
+mov eax, eax
+mov eax, r12d
+mov ebp, edx
+mov ebx, [rdi + rcx*4 - 8]
+mov ebx, eax
+mov ebx, r8d
+mov ecx, r12d
+mov ecx, r8d
+mov edx, [rax + rcx*4]
+mov edx, [rax]
+mov edx, [rbp+r11]
+mov edx, [rbp+r9]
+mov edx, [rbx + 16 + rcx*4]
+mov edx, ebx
+mov edx, r12d
+mov edx, r8d
+mov edx, r9d
+mov qword ptr [r15+rcx], 0
+mov qword ptr [r9+8], 45
+mov qword ptr [rax], 0
+mov qword ptr [rdi+0], 0
+mov qword ptr [rdi+0], 1
+mov qword ptr [rdi+16], 0
+mov qword ptr [rdi+24], 0
+mov qword ptr [rdi+32], 0
+mov qword ptr [rdi+8], 0
+mov qword ptr [rdi+rcx*8], 0
+mov qword ptr [rdi], 0
+mov qword ptr [rip+ca_count], 0
+mov qword ptr [rip+ca_loaded], 1
+mov qword ptr [rip+cur_line], 10
+mov qword ptr [rip+cur_line], 11
+mov qword ptr [rip+cur_line], 6
+mov qword ptr [rip+cur_line], 7
+mov qword ptr [rip+cur_line], 8
+mov qword ptr [rip+dec_taglen], r10
+mov qword ptr [rip+e_init], 1
+mov qword ptr [rip+flen], 0
+mov qword ptr [rip+fpos], 0
+mov qword ptr [rip+hx_cur], 0
+mov qword ptr [rip+hx_pathlen], 1
+mov qword ptr [rip+in_eof], 1
+mov qword ptr [rip+inbuf_len], 0
+mov qword ptr [rip+inbuf_pos], 0
+mov qword ptr [rip+resp_len], 0
+mov qword ptr [rip+xs_swap], 0
+mov r10, 0x32
+mov r10, 32
+mov r10, 5
+mov r10, [rip+dec_taglen]
+mov r10, [rip+inbuf_pos]
+mov r10, [rip+poly_h+16]
+mov r10, [rsi+16]
+mov r10, r8
+mov r10, r9
+mov r10, rax
+mov r10, rcx
+mov r10,32
+mov r10,36
+mov r10,40
+mov r10,44
+mov r10d, [rbp+8]
+mov r10d, r9d
+mov r11, [rip+ch_extpos]
+mov r11, [rip+poly_h+24]
+mov r11, [rsi+24]
+mov r11, r9
+mov r11, rax
+mov r11,48
+mov r11,52
+mov r11,56
+mov r11,60
+mov r11d, [rbp+12]
+mov r11d, r10d
+mov r12, 10
+mov r12, 12
+mov r12, 16
+mov r12, 2048
+mov r12, 31
+mov r12, [rip+fpos]
+mov r12, [rip+poly_h+32]
+mov r12, [rsi+32]
+mov r12, r10
+mov r12, r14
+mov r12, r15
+mov r12, r8
+mov r12, r9
+mov r12, rax
+mov r12, rcx
+mov r12, rdi
+mov r12, rdx
+mov r12, rsi
+mov r12d, [rbp+16]
+mov r12d, r11d
+mov r13, 0
+mov r13, 0x1000000
+mov r13, 1
+mov r13, 7
+mov r13, 8
+mov r13, [r12]
+mov r13, [rip+cur_mod]
+mov r13, [rip+se_gnnext]
+mov r13, [rip+vc_count]
+mov r13, r10
+mov r13, r12
+mov r13, r14
+mov r13, r15
+mov r13, r8
+mov r13, r9
+mov r13, rax
+mov r13, rcx
+mov r13, rdx
+mov r13, rsi
+mov r13d, [rbp+20]
+mov r13d, r12d
+mov r14, -1
+mov r14, 0
+mov r14, 1
+mov r14, 121665
+mov r14, 2
+mov r14, 22
+mov r14, 254
+mov r14, 255
+mov r14, 4
+mov r14, [r12]
+mov r14, [r13]
+mov r14, [rip+cur_mod]
+mov r14, [rip+flen]
+mov r14, [rip+hx_cur]
+mov r14, r10
+mov r14, r11
+mov r14, r13
+mov r14, r8
+mov r14, rax
+mov r14, rcx
+mov r14, rdi
+mov r14, rdx
+mov r14, rsi
+mov r14d, [rbp+24]
+mov r14d, r13d
+mov r15, -1
+mov r15, 80
+mov r15, [r13]
+mov r15, [rbp + 32]
+mov r15, [rbx]
+mov r15, [rip+hx_bodylen]
+mov r15, r13
+mov r15, r8
+mov r15, r9
+mov r15, rax
+mov r15, rcx
+mov r15, rdx
+mov r15, rsi
+mov r15d, [rbp+28]
+mov r15d, r14d
+mov r8, -1
+mov r8, 1
+mov r8, 10
+mov r8, 130
+mov r8, 19
+mov r8, 32
+mov r8, 4
+mov r8, 443
+mov r8, 49
+mov r8, 5
+mov r8, 50
+mov r8, 80
+mov r8, 9
+mov r8, 99
+mov r8, [r12+0]
+mov r8, [r12]
+mov r8, [rbp + r14*8]
+mov r8, [rdi]
+mov r8, [rdx+rcx]
+mov r8, [rip+cur_n0]
+mov r8, [rip+fe_rr+0]
+mov r8, [rip+fe_rr+16]
+mov r8, [rip+fe_rr+32]
+mov r8, [rip+fe_rr+48]
+mov r8, [rip+fe_rr+64]
+mov r8, [rip+hg_req_ptr]
+mov r8, [rip+hx_bodyptr]
+mov r8, [rip+hx_cur]
+mov r8, [rip+poly_h+0]
+mov r8, [rip+poly_r+16]
+mov r8, [rip+poly_r+24]
+mov r8, [rip+poly_r+32]
+mov r8, [rip+poly_r+8]
+mov r8, [rip+tlen]
+mov r8, [rip+vc_tbs_len]
+mov r8, [rsi+0]
+mov r8, r14
+mov r8, r15
+mov r8, r9
+mov r8, rax
+mov r8, rbp
+mov r8, rdx
+mov r8,12
+mov r8,4
+mov r8,8
+mov r8d, [rbp+0]
+mov r8d, eax
+mov r9, 12
+mov r9, 16
+mov r9, 2
+mov r9, 32
+mov r9, 36
+mov r9, [r12+rax*8]
+mov r9, [r13 + rax*8]
+mov r9, [r13]
+mov r9, [rip+fe_rr+24]
+mov r9, [rip+fe_rr+40]
+mov r9, [rip+fe_rr+56]
+mov r9, [rip+fe_rr+72]
+mov r9, [rip+fe_rr+8]
+mov r9, [rip+hg_req_len]
+mov r9, [rip+poly_h+8]
+mov r9, [rsi+8]
+mov r9, rax
+mov r9, rbx
+mov r9, rcx
+mov r9, rdx
+mov r9,16
+mov r9,20
+mov r9,24
+mov r9,28
+mov r9d, [rbp+4]
+mov r9d, r8d
+mov rax, -1
+mov rax, 0
+mov rax, 1
+mov rax, 2
+mov rax, 201
+mov rax, 3
+mov rax, 318
+mov rax, 32
+mov rax, 41
+mov rax, 4194304
+mov rax, 42
+mov rax, 44
+mov rax, 45
+mov rax, 60
+mov rax, 64
+mov rax, 65537
+mov rax, 9
+mov rax, [r12 + r13*8 + 8]
+mov rax, [r12 + rcx*8 + 8]
+mov rax, [r12+16]
+mov rax, [r12+24]
+mov rax, [r12+32]
+mov rax, [r12+40]
+mov rax, [r12+48]
+mov rax, [r12+56]
+mov rax, [r12+64]
+mov rax, [r12+8]
+mov rax, [r12+r13*8+8]
+mov rax, [r13 + 0]
+mov rax, [r13 + 256]
+mov rax, [r13 + 264]
+mov rax, [r13 + rcx*8 + 8]
+mov rax, [r13 + rcx*8]
+mov rax, [r13 + rdx*8 + 8]
+mov rax, [r13+0]
+mov rax, [r13+16]
+mov rax, [r13+24]
+mov rax, [r13+32]
+mov rax, [r13+8]
+mov rax, [r13]
+mov rax, [r14+16]
+mov rax, [r14+24]
+mov rax, [r14+32]
+mov rax, [r14+8]
+mov rax, [r14]
+mov rax, [rax]
+mov rax, [rbp - 8]
+mov rax, [rbx + r9*8 + 8]
+mov rax, [rbx + rcx*8]
+mov rax, [rbx+rcx*8+8]
+mov rax, [rbx+rcx*8]
+mov rax, [rbx]
+mov rax, [rdi+16]
+mov rax, [rdi+24]
+mov rax, [rdi+8]
+mov rax, [rdi+rcx*8]
+mov rax, [rdi]
+mov rax, [rip+arena_ptr]
+mov rax, [rip+argc_val]
+mov rax, [rip+argv_ptr]
+mov rax, [rip+ca_count]
+mov rax, [rip+ca_loaded]
+mov rax, [rip+conn_fd]
+mov rax, [rip+conn_port]
+mov rax, [rip+dt_days]
+mov rax, [rip+dt_doe]
+mov rax, [rip+dt_era]
+mov rax, [rip+dt_mp]
+mov rax, [rip+dt_y]
+mov rax, [rip+dt_yoe]
+mov rax, [rip+e_init]
+mov rax, [rip+e_n0n]
+mov rax, [rip+e_n0p]
+mov rax, [rip+fpos]
+mov rax, [rip+hx_port]
+mov rax, [rip+hx_scheme]
+mov rax, [rip+in_eof]
+mov rax, [rip+inbuf_pos]
+mov rax, [rip+poly_d+0]
+mov rax, [rip+poly_d+16]
+mov rax, [rip+poly_d+24]
+mov rax, [rip+poly_d+32]
+mov rax, [rip+poly_d+8]
+mov rax, [rip+poly_g+0]
+mov rax, [rip+poly_g+16]
+mov rax, [rip+poly_g+24]
+mov rax, [rip+poly_g+32]
+mov rax, [rip+poly_g+8]
+mov rax, [rip+resp_len]
+mov rax, [rip+tlen]
+mov rax, [rip+x_issuer_len]
+mov rax, [rip+x_issuer_ptr]
+mov rax, [rip+x_tbs_len]
+mov rax, [rip+x_tbs_ptr]
+mov rax, [rip+xs_swap]
+mov rax, [rsi + rcx*8]
+mov rax, [rsi+0]
+mov rax, [rsi+16]
+mov rax, [rsi+24]
+mov rax, [rsi+32]
+mov rax, [rsi+8]
+mov rax, [rsi+rcx*8]
+mov rax, [rsi+rcx]
+mov rax, [rsp+8]
+mov rax, r10
+mov rax, r11
+mov rax, r12
+mov rax, r13
+mov rax, r14
+mov rax, r15
+mov rax, r8
+mov rax, r9
+mov rax, rbp
+mov rax, rbx
+mov rax, rcx
+mov rax, rdi
+mov rax, rdx
+mov rbp, 17
+mov rbp, [rip+resp_len]
+mov rbp, r9
+mov rbp, rax
+mov rbp, rcx
+mov rbp, rdx
+mov rbp, rsi
+mov rbp, rsp
+mov rbx, [rip+dt_doy]
+mov rbx, [rip+hx_body]
+mov rbx, r12
+mov rbx, r14
+mov rbx, r15
+mov rbx, r8
+mov rbx, rax
+mov rbx, rcx
+mov rbx, rdi
+mov rbx, rdx
+mov rbx, rsi
+mov rcx, 0x16
+mov rcx, 0x17
+mov rcx, 0x4000000
+mov rcx, 1
+mov rcx, 10
+mov rcx, 100
+mov rcx, 1460
+mov rcx, 146096
+mov rcx, 146097
+mov rcx, 153
+mov rcx, 17
+mov rcx, 2
+mov rcx, 23
+mov rcx, 25
+mov rcx, 27
+mov rcx, 3
+mov rcx, 31
+mov rcx, 32
+mov rcx, 3600
+mov rcx, 365
+mov rcx, 36524
+mov rcx, 4
+mov rcx, 5
+mov rcx, 6
+mov rcx, 60
+mov rcx, 7
+mov rcx, 8
+mov rcx, 86400
+mov rcx, [r12]
+mov rcx, [rbx]
+mov rcx, [rip+cur_mod]
+mov rcx, [rip+dt_doe]
+mov rcx, [rip+hg_hostlen]
+mov rcx, [rip+se_hostlen]
+mov rcx, [rip+tlen]
+mov rcx, [rip+vc_tbs_ptr]
+mov rcx, [rsi+24]
+mov rcx, r10
+mov rcx, r11
+mov rcx, r12
+mov rcx, r13
+mov rcx, r14
+mov rcx, r8
+mov rcx, r9
+mov rcx, rax
+mov rcx, rbp
+mov rcx, rbx
+mov rdi, 1
+mov rdi, 12
+mov rdi, 2
+mov rdi, 443
+mov rdi, 70
+mov rdi, 8
+mov rdi, [r12 + rbx*8 + 8]
+mov rdi, [rbx + r13*8]
+mov rdi, [rbx]
+mov rdi, [rdi+rcx]
+mov rdi, [rdi]
+mov rdi, [rip+cert_msg_ptr]
+mov rdi, [rip+conn_fd]
+mov rdi, [rip+cur_line]
+mov rdi, [rip+ev_r]
+mov rdi, [rip+ev_s]
+mov rdi, [rip+hg_host]
+mov rdi, [rip+mm_out]
+mov rdi, [rip+sfin_ptr]
+mov rdi, [rip+vc_host]
+mov rdi, [rip+x_ext_ptr]
+mov rdi, [rip+x_tbs_ptr]
+mov rdi, [rip+x_val_ptr]
+mov rdi, r10
+mov rdi, r12
+mov rdi, r13
+mov rdi, r14
+mov rdi, r15
+mov rdi, r8
+mov rdi, rax
+mov rdi, rbx
+mov rdi,rbx
+mov rdx, 0
+mov rdx, 0x1A4
+mov rdx, 1
+mov rdx, 1048576
+mov rdx, 16
+mov rdx, 17
+mov rdx, 2
+mov rdx, 2048
+mov rdx, 255
+mov rdx, 3
+mov rdx, 300000
+mov rdx, 31
+mov rdx, 32
+mov rdx, 4
+mov rdx, 4194304
+mov rdx, 43
+mov rdx, 5
+mov rdx, 512
+mov rdx, 6
+mov rdx, 62
+mov rdx, 63
+mov rdx, 65536
+mov rdx, 9
+mov rdx, [r12 + rax*8 + 8]
+mov rdx, [r13 + rcx*8 + 8]
+mov rdx, [r14+8]
+mov rdx, [rbx+8]
+mov rdx, [rdi+8]
+mov rdx, [rdi+rcx*8]
+mov rdx, [rip+cur_r2]
+mov rdx, [rip+hg_host]
+mov rdx, [rip+hx_hostlen]
+mov rdx, [rip+hx_method_len]
+mov rdx, [rip+hx_pathlen]
+mov rdx, [rsi+rcx*8]
+mov rdx, r10
+mov rdx, r11
+mov rdx, r12
+mov rdx, r13
+mov rdx, r14
+mov rdx, r15
+mov rdx, r8
+mov rdx, r9
+mov rdx, rax
+mov rdx, rbp
+mov rdx, rbx
+mov rdx, rcx
+mov rdx, rsi
+mov rdx,rsi
+mov rsi, 0
+mov rsi, 0x241
+mov rsi, 0x441
+mov rsi, 1
+mov rsi, 13
+mov rsi, 14
+mov rsi, 15
+mov rsi, 18
+mov rsi, 19
+mov rsi, 2
+mov rsi, 20
+mov rsi, 26
+mov rsi, 32
+mov rsi, 36
+mov rsi, 38
+mov rsi, 6
+mov rsi, 72
+mov rsi, 96
+mov rsi, [rax + rdi*8]
+mov rsi, [rbx + rax*8]
+mov rsi, [rip+cert_count]
+mov rsi, [rip+cert_tlen]
+mov rsi, [rip+cv_msg_ptr]
+mov rsi, [rip+ev_Qx]
+mov rsi, [rip+ev_Qy]
+mov rsi, [rip+ev_e]
+mov rsi, [rip+ev_r]
+mov rsi, [rip+ev_s]
+mov rsi, [rip+hg_hostlen]
+mov rsi, [rip+hx_hostlen]
+mov rsi, [rip+hx_method_ptr]
+mov rsi, [rip+sfin_len]
+mov rsi, [rip+sfin_ptr]
+mov rsi, [rip+tlen]
+mov rsi, [rip+vc_anchor_ptr]
+mov rsi, [rip+vc_hostlen]
+mov rsi, [rip+vc_want_iss_ptr]
+mov rsi, [rip+x_tbs_len]
+mov rsi, r12
+mov rsi, r13
+mov rsi, r14
+mov rsi, r8
+mov rsi, r9
+mov rsi, rax
+mov rsi, rbx
+mov rsi, rdi
+mov rsi, rdx
+mov rsi,r12
+mov rsi,r13
+mov rsp, rbp
+mov word ptr [rbx + r12], 0x0100
+mov word ptr [rbx+10], 0
+mov word ptr [rbx+2], 0x0001
+mov word ptr [rbx+4], 0x0100
+mov word ptr [rbx+6], 0
+mov word ptr [rbx+8], 0
+mov word ptr [rbx], 0x3412
+mov word ptr [rbx], 2
+movabs r11, 0x10000000
+movabs r11, 0x600000000000
+movabs r11, 0x600010000000
+movabs r11, 0x7ffffffffffff
+movabs r15, 0x7ffffffffffff
+movabs r8,  0xfffffffffffda
+movabs r9,  0xffffffffffffe
+movabs rax, 0
+movabs rax, 0x600000000000
+movabs rax, 0x7fffffffffffffff
+movabs rax, 105553116266496
+movabs rax, 105553116266704
+movabs rax, 105553116266824
+movabs rax, 105553116266864
+movabs rax, 60
+movabs rcx, 0x0ffffffc0ffffffc
+movabs rcx, 0x0ffffffc0fffffff
+movabs rdi, 0x600000000000
+movabs rsi, 0x10000000
+movsb
+movzx r10, byte ptr [r8+rcx+1]
+movzx r10, r10b
+movzx r11, byte ptr [r8+rcx+2]
+movzx r11, byte ptr [rbx + r10]
+movzx r13, byte ptr [r8+rcx+3]
+movzx r15, byte ptr [r8+6]
+movzx r8, byte ptr [rsi+6]
+movzx r8, byte ptr [rsi+rcx]
+movzx r8, byte ptr [rsi+rdx]
+movzx r8, r8b
+movzx r9, byte ptr [r8 + r10]
+movzx r9, byte ptr [rcx+3]
+movzx r9, byte ptr [rcx+9]
+movzx rax, al
+movzx rax, byte ptr [r12+3]
+movzx rax, byte ptr [r12+rbx]
+movzx rax, byte ptr [r13 + r14]
+movzx rax, byte ptr [r13 + r15]
+movzx rax, byte ptr [r13+r12]
+movzx rax, byte ptr [r13+rbx]
+movzx rax, byte ptr [r8 + r10]
+movzx rax, byte ptr [r8 + rcx]
+movzx rax, byte ptr [r8 + rdi]
+movzx rax, byte ptr [r8+7]
+movzx rax, byte ptr [r8+r9]
+movzx rax, byte ptr [r8+rcx]
+movzx rax, byte ptr [r8+rdi+1]
+movzx rax, byte ptr [r8+rdi+9]
+movzx rax, byte ptr [rbx + r10]
+movzx rax, byte ptr [rbx+rcx]
+movzx rax, byte ptr [rbx+rdx]
+movzx rax, byte ptr [rbx]
+movzx rax, byte ptr [rcx + r10]
+movzx rax, byte ptr [rcx]
+movzx rax, byte ptr [rdi+1]
+movzx rax, byte ptr [rdi+rcx]
+movzx rax, byte ptr [rdi]
+movzx rax, byte ptr [rsi]
+movzx rcx, byte ptr [r12+rbx]
+movzx rcx, byte ptr [r8+rdi]
+movzx rcx, byte ptr [rdi+1]
+movzx rcx, byte ptr [rdi+2]
+movzx rcx, byte ptr [rdi+3]
+movzx rdx, byte ptr [r12+4]
+movzx rdx, byte ptr [r8+rcx]
+movzx rdx, byte ptr [r8+rdi+8]
+movzx rdx, byte ptr [r9+rdx]
+movzx rdx, byte ptr [rcx+1]
+movzx rdx, byte ptr [rcx+2]
+movzx rdx, byte ptr [rcx+8]
+movzx rdx, byte ptr [rsi+7]
+movzx rdx, byte ptr [rsi+r8]
+movzx rdx, byte ptr [rsi+rcx]
+mul qword ptr [r12 + 0]
+mul qword ptr [r12 + rcx*8]
+mul qword ptr [r14+0]
+mul qword ptr [r14+16]
+mul qword ptr [r14+24]
+mul qword ptr [r14+32]
+mul qword ptr [r14+8]
+mul qword ptr [rip+fe_s19+0]
+mul qword ptr [rip+fe_s19+16]
+mul qword ptr [rip+fe_s19+24]
+mul qword ptr [rip+fe_s19+8]
+mul r14
+mul r8
+neg rax
+neg rdi
+not edx
+not rax
+not rdx
+or al, dl
+or bl, 0x80
+or bl, 0xC0
+or bl, 0xE0
+or bl, 0xF0
+or byte ptr [r13+31], 64
+or r10, rax
+or r11, rax
+or r12, rax
+or r15, rax
+or r8, r9
+or r8, rax
+or r8, rdx
+or r9, r10
+or r9, r8
+or r9, rax
+or rax, 0x20
+or rax, r10
+or rax, r11
+or rax, r13
+or rax, r8
+or rax, r9
+or rax, rcx
+or rax, rdx
+or rcx, rax
+or rdx, r9
+or rdx, rax
+pop r10
+pop r11
+pop r12
+pop r13
+pop r14
+pop r15
+pop r8
+pop r9
+pop rax
+pop rbp
+pop rbx
+pop rcx
+pop rdi
+pop rdx
+pop rsi
+push r10
+push r11
+push r12
+push r13
+push r14
+push r15
+push r8
+push r9
+push rax
+push rbp
+push rbx
+push rcx
+push rdi
+push rdx
+push rsi
+ret
+rol edx, 12
+rol edx, 16
+rol edx, 7
+rol edx, 8
+ror eax, 6
+ror eax, 7
+ror ebp, 19
+ror ebx, 17
+ror ebx, 2
+ror ecx, 11
+ror ecx, 13
+ror ecx, 22
+ror ecx, 25
+ror edx, 18
+sbb rax, [rdx+rcx*8]
+setb al
+setc al
+setc r10b
+setc r8b
+setc r9b
+shl r10, 12
+shl r10, 6
+shl r11, 6
+shl r14, 5
+shl r15, 8
+shl r8, 4
+shl r8, 6
+shl r8, 8
+shl r9, 12
+shl r9, 8
+shl rax, 1
+shl rax, 12
+shl rax, 16
+shl rax, 18
+shl rax, 26
+shl rax, 3
+shl rax, 6
+shl rax, 8
+shl rcx, 12
+shl rcx, 13
+shl rcx, 14
+shl rcx, 20
+shl rcx, 25
+shl rcx, 38
+shl rcx, 4
+shl rcx, 51
+shl rcx, 8
+shl rdx, 1
+shl rdx, 13
+shl rdx, 26
+shl rdx, 39
+shl rdx, 4
+shl rdx, 8
+shr ebx, 3
+shr edx, 10
+shr r13, 51
+shr r8, 14
+shr r8, 26
+shr r8, 40
+shr r8, 52
+shr r9, 63
+shr r9, cl
+shr rax, 12
+shr rax, 13
+shr rax, 18
+shr rax, 25
+shr rax, 26
+shr rax, 32
+shr rax, 38
+shr rax, 39
+shr rax, 51
+shr rax, 6
+shr rax, 8
+shr rax, cl
+shr rbx, 12
+shr rbx, 18
+shr rbx, 3
+shr rbx, 6
+shr rcx, 26
+shr rcx, 63
+shr rcx, 8
+shr rdx, 4
+shr rdx, 8
+sub r10, [rdx+16]
+sub r10, r11
+sub r10, rax
+sub r11, 48
+sub r11, [rdx+24]
+sub r11, rax
+sub r12, [rdx+32]
+sub r13, 64
+sub r13, r15
+sub r15, r12
+sub r15, r14
+sub r15, rax
+sub r8, [rdx+0]
+sub r9, 8
+sub r9, [rdx+8]
+sub r9, rdx
+sub rax, 48
+sub rax, 5
+sub rax, 87
+sub rax, 9
+sub rax, [r12 + rcx*8]
+sub rax, [rdi+rcx*8]
+sub rax, r11
+sub rax, r12
+sub rax, r13
+sub rax, r15
+sub rax, r8
+sub rax, rbp
+sub rax, rbx
+sub rax, rcx
+sub rax, rdi
+sub rbx, 21
+sub rbx, rax
+sub rbx, rcx
+sub rcx, 1
+sub rcx, r12
+sub rcx, r15
+sub rcx, r8
+sub rcx, rax
+sub rcx, rbx
+sub rcx, rdx
+sub rdx, 0x30
+sub rdx, 5
+sub rdx, r12
+sub rdx, r13
+sub rdx, r14
+sub rdx, rbx
+sub rdx, rcx
+sub rsi, 256
+sub rsi, r12
+sub rsi, r14
+sub rsp, 16
+syscall
+test al, al
+test r10, 15
+test r12, r12
+test r13, r13
+test r14, r14
+test r15, r15
+test r8, r8
+test rax, rax
+test rax,rax
+test rbp, rbp
+test rbx, rbx
+test rdx, rdx
+xor [rdi+4], rax
+xor al, 0x36
+xor al, 0x5c
+xor al, [rdi+rcx]
+xor dl, [r10+rcx]
+xor dl, [rsi+rcx]
+xor eax, ebx
+xor eax, ecx
+xor eax, edx
+xor ebx, ebp
+xor ebx, ecx
+xor ebx, edx
+xor ecx, edx
+xor edx, eax
+xor r10, r10
+xor r11, r11
+xor r12, r12
+xor r13, r13
+xor r14, r14
+xor r15, r15
+xor r8, r8
+xor r8, r9
+xor r8,r8
+xor r9, r8
+xor r9, r9
+xor rax, r15
+xor rax, r9
+xor rax, rax
+xor rbp, rbp
+xor rbx, rbx
+xor rcx, rcx
+xor rdi, rdi
+xor rdx, rdx
+xor rsi, rsi
+
+# --- AES-128-GCM (aes block + GHASH + GCM) instruction forms ---
+cmp r8, 44
+shl r10, 2
+movzx rax, byte ptr [r13+r10]
+movzx rcx, byte ptr [r13+r10+1]
+movzx rdx, byte ptr [r13+r10+2]
+movzx rsi, byte ptr [r13+r10+3]
+mov r11, r8
+and r11, 3
+movzx rcx, byte ptr [rbx+rdx]
+movzx rdx, byte ptr [rbx+rsi]
+movzx rsi, byte ptr [rbx+r9]
+mov r9, r8
+shr r9, 2
+dec r9
+movzx r9, byte ptr [r14+r9]
+sub r10, 4
+shl r11, 2
+movzx r9, byte ptr [r13+r10]
+xor r9, rax
+mov [r13+r11], r9b
+movzx r9, byte ptr [r13+r10+1]
+xor r9, rcx
+mov [r13+r11+1], r9b
+movzx r9, byte ptr [r13+r10+2]
+xor r9, rdx
+mov [r13+r11+2], r9b
+movzx r9, byte ptr [r13+r10+3]
+xor r9, rsi
+mov [r13+r11+3], r9b
+xor al, [r8+rcx]
+movzx rax, byte ptr [r12+rcx]
+mov al, [rbx+rax]
+mov al, [rbx+0]
+mov [r12+0], al
+mov al, [rbx+5]
+mov [r12+1], al
+mov al, [rbx+10]
+mov [r12+2], al
+mov al, [rbx+15]
+mov [r12+3], al
+mov al, [rbx+4]
+mov [r12+4], al
+mov al, [rbx+9]
+mov [r12+5], al
+mov al, [rbx+14]
+mov [r12+6], al
+mov al, [rbx+3]
+mov [r12+7], al
+mov al, [rbx+8]
+mov [r12+8], al
+mov al, [rbx+13]
+mov [r12+9], al
+mov al, [rbx+2]
+mov [r12+10], al
+mov al, [rbx+7]
+mov [r12+11], al
+mov al, [rbx+12]
+mov [r12+12], al
+mov al, [rbx+1]
+mov [r12+13], al
+mov al, [rbx+6]
+mov [r12+14], al
+mov al, [rbx+11]
+mov [r12+15], al
+cmp r15, 4
+shl r8, 2
+add r8, r12
+movzx rax, byte ptr [r8+0]
+movzx rcx, byte ptr [r8+1]
+movzx rdx, byte ptr [r8+2]
+movzx r9,  byte ptr [r8+3]
+xor r10, rcx
+xor r10, rdx
+xor r10, r9
+xor r11, rcx
+movzx r11, byte ptr [rbx+r11]
+xor r11, rax
+xor r11, r10
+mov [r8+0], r11b
+mov r11, rcx
+xor r11, rdx
+mov [r8+1], r11b
+mov r11, rdx
+xor r11, r9
+mov [r8+2], r11b
+mov [r8+3], r11b
+cmp r14, 10
+mov r14, 10
+mov [rsi+rcx], al
+mov rax, [rsi]
+mov rax, [rdx]
+mov rax, [rdx+8]
+mov r14, 128
+shr r15, 63
+and r15, 1
+xor r12, r10
+xor r13, r11
+shl r8, 1
+or r8, r15
+shl r9, 1
+mov r15, r10
+shl r15, 63
+shr r11, 1
+or r11, r15
+shr r10, 1
+xor r10, r15
+cmp rbx, r14
+mov byte ptr [rbp+rcx], 0
+mov dl, [r13+rax]
+xor al, [rbp+rcx]
+add rbx, 16
+movzx rcx, byte ptr [rax+12]
+movzx rdx, byte ptr [rax+13]
+or rcx, rdx
+movzx rdx, byte ptr [rax+14]
+movzx rdx, byte ptr [rax+15]
+shl rcx, 32
+shr rcx, 32
+shr rdx, 24
+mov [rax+12], dl
+shr rdx, 16
+mov [rax+13], dl
+mov [rax+14], dl
+mov [rax+15], cl
+mov al, [rbp+rcx]
+cmp rcx, 12
+mov byte ptr [rdi+12], 0
+mov byte ptr [rdi+13], 0
+mov byte ptr [rdi+14], 0
+mov byte ptr [rdi+15], 1
+cmp rbx, r15
+cmp rax, r15
+mov dl, [r14+rax]
+mov [rsi+rax], dl
+xor al, [rdx+rcx]

@@ -1,0 +1,42 @@
+word
+Copyright 2026 Ryan Kempt
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this software except in compliance with the License. A copy of the License is
+in the LICENSE file at the root of this repository, and at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+
+PROGRAMS YOU COMPILE WITH word
+------------------------------
+
+word emits a small runtime into every binary it produces, and it bundles the
+network and cryptography sources (the net library, kept as text in
+compiler/word.w) into any program that uses a network verb. So a compiled word
+program contains code that came from this repository, and that code is licensed
+material.
+
+Compiling a program with word does not make that program a derivative work of
+word, and nothing here claims any right in the program you wrote. The embedded
+runtime is still word's own Apache-2.0 code travelling inside your binary,
+though, and Apache-2.0 puts conditions on redistribution, notably section
+4(d)'s NOTICE file.
+
+So, as an additional permission granted by the copyright holder and intended to
+be irrevocable:
+
+    You may redistribute the output of the word compiler, in binary form, under
+    terms of your choosing, and you are released from the conditions of the
+    License with respect to the word runtime and library code embedded in it.
+    In particular you need not reproduce the License, this NOTICE, or any
+    attribution alongside such a binary.
+
+This permission covers only what word puts into a binary it compiles. It does
+not apply to word itself. The compiler, its source, the runtime and library
+sources in this repository, and the other files here are covered by the License
+in the usual way, including when you redistribute or modify them.
+
+Runtime libraries in other toolchains carry the same kind of exception (the GCC
+Runtime Library Exception is the best-known one). If you need different or more
+formal terms for a particular use, ask me.

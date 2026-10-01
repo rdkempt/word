@@ -1,0 +1,29 @@
+== sort(region): time vs n (expect ~2x per doubling: n log n) ==
+         n         ms     rss_KB
+     50000        1.2       1152
+    100000        2.0       2304
+    200000        3.8       4608
+    400000        7.2      11020
+
+== s = s . "a" . "b"  (left-nested chain) vs n (expect flat) ==
+         n         ms     rss_KB
+      2000        0.2        576
+      4000        0.2        576
+      8000        0.6        576
+     16000        0.3        576
+
+== s = s . ("a" . "b")  (right-associated; misses the in-place append) ==
+         n         ms     rss_KB
+      2000        0.3        576
+      4000        0.3        576
+      8000        0.4        576
+     16000        0.6       1152
+    320000        7.9      30892
+
+== t = copy(s, j, j + 64) in a loop vs n (expect flat rss) ==
+         n         ms     rss_KB
+    250000        2.7        576
+    500000        5.2        576
+   1000000        9.9        576
+   2000000       17.9        576
+   4000000       36.6        768

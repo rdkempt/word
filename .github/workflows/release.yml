@@ -1,0 +1,302 @@
+name: release
+
+# Cross-build all four targets on one Linux runner and publish them. That's the
+# claim this project makes: one binary writes ELF, PE and Mach-O, with no MinGW,
+# Xcode or binutils. If this job ever needs a second runner to produce a target,
+# the claim isn't true any more.
+#
+# Two ways a release happens:
+#
+#   push a tag v1.0.1  ->  a release named for the tag, with the binaries attached
+#   push to main       ->  the one rolling `nightly` prerelease, replaced in place
+#                          and titled with the commit
+#
+# So main can be built many times a day without using up version numbers, and
+# `nightly` is always whatever main is right now. A manual run on any other
+# branch builds and checks everything and publishes nothing.
+on:
+  push:
+    tags: ['v*']
+    branches: [main]
+  workflow_dispatch:
+
+# The least this job needs to publish a release and attest it:
+#
+#   contents:     create the release, upload its assets and move the nightly tag
+#   id-token:     get the short-lived OIDC token the attestation is signed with
+#   attestations: record the attestation against this repository
+#
+# The last two stay while the repository is private and the attest step is
+# skipped (see there), so going public turns attestation on instead of failing
+# it for want of a permission.
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+# Every `uses:` in this repository is pinned to a commit SHA, with the version it
+# belongs to in a trailing comment. The maintainer of an action can move a tag
+# like `@v4`, and this job holds a token that can publish a release, so it names
+# the exact code instead. GitHub recommends SHA pinning for this reason. Nothing
+# updates the pins automatically: change the SHA and the comment together.
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # The job takes well under a minute. The upload, and on a tag the signed-tag
+    # check and the attestation, go over the network with no timeout of their
+    # own, so this cap stops a hung call from running to the six-hour default
+    # with the next nightly queued behind it. It's generous because a timeout
+    # that fired between deleting the old nightly and creating the new one would
+    # leave no nightly at all.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      # The same fixed point `word verify` checks everywhere else, run before
+      # anything is built for publishing.
+      - name: the committed binary reproduces itself
+        run: ./word verify
+
+      # word_version() is a constant in compiler/word.w, so it can drift from the
+      # tag. This catches that before anything is uploaded.
+      - name: word_version() matches the tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          want="${GITHUB_REF_NAME#v}"
+          got="$(./word version | head -1 | awk '{print $2}')"
+          if [ "$want" != "$got" ]; then
+            echo "tag is $GITHUB_REF_NAME but word_version() says $got"
+            echo "bump word_version() in compiler/word.w, re-bootstrap, commit the binary, then re-tag."
+            exit 1
+          fi
+          echo "version $got matches tag $GITHUB_REF_NAME"
+
+      # A tag is what starts a release, and anyone who can push can create one.
+      # A signed tag records who did. The attestation below shows the artifacts
+      # came out of this workflow, and this shows the workflow was started by
+      # whoever holds the signing key.
+      #
+      # If this fails, the tag was lightweight or unsigned. Set up signing once
+      # (docs/BOOTSTRAP.md, "Cutting a release"), then:
+      #     git tag -d v1.0.0 && git push origin :v1.0.0
+      #     git tag -s v1.0.0 -m 'word 1.0.0' && git push origin v1.0.0
+      - name: the release tag is signed
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ref=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$GITHUB_REF_NAME" \
+                  --jq '.object.type + " " + .object.sha')
+          kind=${ref%% *}; sha=${ref##* }
+          if [ "$kind" != "tag" ]; then
+            echo "$GITHUB_REF_NAME is a lightweight tag, so there is nothing to sign."
+            echo "Re-cut it with 'git tag -s' (see docs/BOOTSTRAP.md)."
+            exit 1
+          fi
+          v=$(gh api "repos/$GITHUB_REPOSITORY/git/tags/$sha" --jq '.verification.verified')
+          r=$(gh api "repos/$GITHUB_REPOSITORY/git/tags/$sha" --jq '.verification.reason')
+          if [ "$v" != "true" ]; then
+            echo "$GITHUB_REF_NAME carries no verifiable signature (reason: $r)."
+            echo "Re-cut it with 'git tag -s' (see docs/BOOTSTRAP.md)."
+            exit 1
+          fi
+          echo "$GITHUB_REF_NAME is signed and verified"
+
+      # A PE doesn't record the name it was written to, so the .exe here is the
+      # same bytes as the word.exe windows.yml builds and tests.
+      - name: cross-build every target from this one binary
+        run: |
+          mkdir -p dist
+          ./word build        compiler/word.w -o dist/word-linux-x64
+          ./word build -arm64 compiler/word.w -o dist/word-linux-arm64
+          ./word build -win   compiler/word.w -o dist/word-windows-x64.exe
+          ./word build -mac   compiler/word.w -o dist/word-macos-arm64
+          chmod +x dist/word-linux-x64 dist/word-linux-arm64 dist/word-macos-arm64
+
+      # The Linux download has to be the binary in the repo, so what people
+      # download and the auditable seed (docs/BOOTSTRAP.md) are the same file.
+      - name: the linux artifact is the committed seed, byte for byte
+        run: cmp dist/word-linux-x64 word
+
+      # A release asset has no file mode, so a bare binary downloads without its
+      # executable bit and needs a `chmod +x` before it runs. tar records the
+      # mode, so the three unix targets ship as a .tar.gz holding one file named
+      # `word`, and `tar xzf ... && ./word` works the same as a fresh clone. On
+      # macOS, command-line tar doesn't pass a download's quarantine flag on to
+      # what it extracts, so there's no Gatekeeper step either. Windows has no
+      # executable bit, so it gets the bare .exe. One download per target.
+      #
+      # The archives are reproducible. --sort, a fixed --mtime, numeric 0/0
+      # ownership and `gzip -n` (no name or timestamp in the header) make each
+      # one depend only on the binary inside, so with the same tar and gzip the
+      # same seed always gives the same SHA256SUMS line.
+      - name: package the unix targets so the executable bit survives
+        run: |
+          for t in linux-x64 linux-arm64 macos-arm64; do
+            rm -rf stage && mkdir stage
+            cp "dist/word-$t" stage/word
+            chmod 755 stage/word
+            tar --sort=name --mtime='UTC 1970-01-01' \
+                --owner=0 --group=0 --numeric-owner \
+                -cf - -C stage word | gzip -n -9 > "dist/word-$t.tar.gz"
+            rm "dist/word-$t"
+          done
+          rm -rf stage
+          # `word-*` rather than `*` so the sums file never lists itself.
+          ( cd dist && sha256sum word-* > SHA256SUMS && cat SHA256SUMS )
+
+      # What the release notes promise, checked before anything is uploaded: the
+      # archive extracts with mode 755 (under the runner's umask, 022), and what
+      # comes out is the committed seed, which still verifies.
+      - name: the tarball restores the bit, and its contents are the seed
+        run: |
+          mkdir -p check && tar xzf dist/word-linux-x64.tar.gz -C check
+          mode=$(stat -c '%a' check/word)
+          [ "$mode" = "755" ] || { echo "extracted mode is $mode, not 755"; exit 1; }
+          cmp check/word word
+          check/word verify
+          rm -rf check
+          echo "the tarball extracts an executable, byte-identical, self-verifying word"
+
+      # Provenance, which SHA256SUMS can't give. The sums file comes from the
+      # same job as the binaries, so anyone who could replace one could replace
+      # the other. An attestation is a signed statement, checkable against this
+      # repository and this run, that the artifacts came out of this commit on
+      # GitHub's runners:
+      #
+      #     gh attestation verify word-linux-x64.tar.gz --repo rdkempt/word
+      #
+      # It covers the archives and the .exe themselves. Attesting SHA256SUMS
+      # instead would only vouch for a list of hashes.
+      #
+      # This only runs from a public repository. GitHub's docs ("Using artifact
+      # attestations to establish provenance for builds") offer attestations on
+      # the Free, Pro and Team plans to public repositories only, and to private
+      # ones on Enterprise Cloud, which a personal account can't have. On a
+      # private repository the step fails with
+      #
+      #     Failed to persist attestation: Feature not available for
+      #     user-owned private repositories.
+      #
+      # and the release would never publish. So a release from a private
+      # repository skips this step, and its notes say it has no attestation.
+      # Going public turns attestation on with no edit here. A release cut while
+      # private stays unattested until it's deleted and its tag pushed again,
+      # because re-running the job replays the old event, which still says
+      # private.
+      #
+      # The condition is `!private` because GitHub's webhook schema
+      # (github/rest-api-description) makes `repository.private` required in
+      # both the push and the workflow_dispatch payloads, but `visibility` is
+      # optional in workflow_dispatch. If `visibility` were missing, a check for
+      # 'public' would skip the attestation on a public repository. If `private`
+      # were missing, this step would run, and on a private repository it would
+      # fail loudly.
+      #
+      # It isn't continue-on-error, because on a public repository that would
+      # publish right past a real signing failure.
+      - name: attest the artifacts this run produced
+        id: attest
+        if: startsWith(github.ref, 'refs/tags/v') && !github.event.repository.private
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: 'dist/word-*'
+
+      # The notes mention an attestation only when the step above made one. They
+      # read its outcome instead of repeating its condition, so the two can't
+      # drift. The outcome here is success or skipped, since a failure stops the
+      # job.
+      - name: publish the tagged release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ATTESTED: ${{ steps.attest.outcome == 'success' }}
+        run: |
+          cat > notes.md <<'NOTES'
+          Four targets, all cross-built from the Linux `word` binary committed here,
+          after `word verify` rebuilt it from `compiler/word.w` and got the same bytes.
+
+          The `word` inside `word-linux-x64.tar.gz` is byte-identical to the `word`
+          committed at this tag, so the download and the auditable seed
+          (`docs/BOOTSTRAP.md`) are the same file.
+
+          One download per target:
+
+          | target | download | then |
+          |---|---|---|
+          | Linux x86-64 | `word-linux-x64.tar.gz` | `tar xzf word-linux-x64.tar.gz && ./word` |
+          | Linux arm64 | `word-linux-arm64.tar.gz` | `tar xzf word-linux-arm64.tar.gz && ./word` |
+          | macOS, Apple Silicon | `word-macos-arm64.tar.gz` | `tar xzf word-macos-arm64.tar.gz && ./word` |
+          | Windows x64 | `word-windows-x64.exe` | run it |
+
+          `net` doesn't work on macOS in this release: a program that uses it builds for
+          macOS, but every net verb answers `none` there.
+
+          The Linux and macOS builds come as `.tar.gz`. A release asset can't carry a
+          file mode, so a bare binary always downloads without its executable bit, but
+          tar records the bit and restores it. You don't need `chmod +x`, and on macOS
+          there's no Gatekeeper step either, because command-line tar doesn't pass the
+          quarantine flag on to what it extracts. Windows has no executable bit, so it
+          gets the bare `.exe`. Windows will still warn that the binary is unsigned.
+
+          Building the archives again from the same seed gives the same bytes, so the
+          `SHA256SUMS` lines don't change. Before anything was uploaded, the workflow
+          checked that what comes out of `word-linux-x64.tar.gz` is the seed itself.
+
+          NOTES
+          if [ "$ATTESTED" = true ]; then
+            cat >> notes.md <<'NOTES'
+          Checksums are in `SHA256SUMS`. Every artifact also has a signed build
+          attestation, which shows where it was built (a checksum file can't do that).
+          To check one:
+
+          ```
+          gh attestation verify word-linux-x64.tar.gz --repo rdkempt/word
+          ```
+
+          NOTES
+          else
+            cat >> notes.md <<'NOTES'
+          Checksums are in `SHA256SUMS`. This release has no build attestation: it was
+          published while the repository was private, and GitHub only offers artifact
+          attestations to private repositories on its Enterprise Cloud plan. A checksum
+          file comes from the same job as the binaries, so it shows that a download
+          arrived intact, but not where it came from.
+
+          NOTES
+          fi
+          cat >> notes.md <<'NOTES'
+          The release tag is signed, and the workflow doesn't publish a release without
+          that. GitHub shows it as Verified, and anyone with the maintainer's public key
+          can check it with `git tag -v`.
+          NOTES
+          sed -i 's/^          //' notes.md
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "word $GITHUB_REF_NAME" --notes-file notes.md
+
+      # One release, replaced every time. Deleting its tag with it keeps
+      # `nightly` pointing at the commit it was built from.
+      - name: refresh the rolling nightly
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<'NOTES'
+          Built from main at COMMIT. It's replaced on every push to main, so it's
+          whatever main is right now, not a version.
+
+          `word version` on these binaries reports the version number in the source,
+          because stamping a commit into the binary would make two builds of the same
+          source differ, and `word verify` would stop holding. For a numbered release,
+          use a tagged one.
+          NOTES
+          sed -i 's/^          //' notes.md
+          sed -i "s/COMMIT/${GITHUB_SHA:0:7}/" notes.md
+          gh release delete nightly --cleanup-tag --yes || true
+          gh release create nightly dist/* --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "nightly (${GITHUB_SHA:0:7})" --notes-file notes.md

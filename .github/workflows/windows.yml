@@ -1,0 +1,341 @@
+name: windows
+
+# The Windows port, run on Windows. ci.yml cross-builds a PE and checks its
+# structure with objdump, but only Windows can show that GetCommandLineA,
+# BCryptGenRandom, the ws2_32 socket calls, the Crypt32 ROOT store and
+# GetNetworkParams behave the way the runtime expects. timeout() once did
+# nothing at all on Windows, and nothing caught it because nothing ran a socket
+# here.
+#
+# The split is the same as macos.yml's: the committed ./word is a Linux ELF, so
+# the cross-build runs on Linux and word.exe goes to a Windows runner to run.
+# Windows minutes bill at 2x Linux, so this is its own workflow instead of a
+# job in ci.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  # The cross-build from the committed binary, the same way release.yml builds
+  # word-windows-x64.exe.
+  cross-build:
+    runs-on: ubuntu-latest
+    # A draft pull request doesn't run this. Marking it ready for review does,
+    # which is why `ready_for_review` is in the trigger list above.
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: cross-build word.exe from the committed seed
+        run: |
+          mkdir -p out
+          ./word build -win compiler/word.w -o out/word.exe
+          ls -l out/word.exe
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: word-windows
+          path: out/word.exe
+
+  # The half Linux can't answer: does it run, and does it give the same answers?
+  native:
+    runs-on: windows-latest
+    # A draft pull request doesn't run this. Marking it ready for review does,
+    # which is why `ready_for_review` is in the trigger list above.
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    needs: cross-build
+    timeout-minutes: 30
+    defaults:
+      run:
+        # Git Bash, so the suites' sh scripts run unchanged. They convert their
+        # paths through dev/toolchain/hostpath.sh, because word.exe is a native
+        # binary and /d/a/word/word isn't a file name CreateFileA understands.
+        shell: bash
+    steps:
+      # Checkout first: it cleans the workspace, which would delete the
+      # artifact. The source has to be here for word.exe to compile itself.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: word-windows
+      # Git Bash on a stock Windows runner has `python` on PATH but not
+      # `python3`, and most suites below use python3: for their fixture servers,
+      # to mutate fuzz seeds, and to pull the net library out of compiler/word.w.
+      # Without it they would skip, or fail.
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+
+      # Many suites below skip, whole or in part, when their oracle is missing.
+      # That's right on a contributor's machine and wrong here, so this checks
+      # the runner has them, the way ci.yml does for llvm-mc, node and go.
+      - name: the oracles this job needs are present
+        run: |
+          echo "bash $BASH_VERSION on $RUNNER_OS"
+          # setup-python installs python.exe, and whether a python3.exe comes
+          # with it has varied between runner images. Every suite here asks for
+          # python3, so put a shim on PATH if it's missing. The Python directory
+          # isn't ours to write into, and $GITHUB_PATH carries the shim to the
+          # steps that follow.
+          if ! command -v python3 >/dev/null 2>&1; then
+            command -v python >/dev/null 2>&1 || { echo "no python at all"; exit 1; }
+            mkdir -p "$RUNNER_TEMP/py3"
+            {
+              echo "#!/bin/sh"
+              echo 'exec python "$@"'
+            } > "$RUNNER_TEMP/py3/python3"
+            chmod +x "$RUNNER_TEMP/py3/python3"
+            echo "$RUNNER_TEMP/py3" >> "$GITHUB_PATH"
+            export PATH="$RUNNER_TEMP/py3:$PATH"
+          fi
+          python3 --version || { echo "python3 is missing, so the fixture servers can't run"; exit 1; }
+          openssl version   || { echo "openssl is missing, so the certificates and fuzz seeds can't be made"; exit 1; }
+          go version        || { echo "go is missing, and the second X.509 oracle must not skip"; exit 1; }
+
+      # word.exe was cross-built on Linux from this source. `word version` has it
+      # rebuild itself for Windows and match its own bytes, and `word verify`
+      # has it rebuild the Linux seed and match ./word. So word self-hosts on
+      # Windows, and both hosts agree on the output.
+      - name: word.exe self-hosts (the fixed point, natively)
+        run: |
+          ./word.exe version
+          ./word.exe verify
+          # release.yml publishes this binary as word-windows-x64.exe. A PE
+          # doesn't record its own file name, so under that name it has to be
+          # in step as well.
+          cp word.exe word-windows-x64.exe
+          ./word-windows-x64.exe version | tee version.out
+          grep -q 'in step  *yes' version.out || { echo "word-windows-x64.exe is not in step"; exit 1; }
+
+      # `word run` builds a temporary binary for the host and starts it with
+      # CreateProcessA (execve elsewhere), so this is the step that checks
+      # host_target picks Windows. If it got that wrong, it would build an ELF.
+      - name: word run, natively
+        run: |
+          printf 'out("run on Windows: " . (40 + 2))\n' > r.w
+          got=$(./word.exe run r.w)
+          echo "$got"
+          [ "$got" = "run on Windows: 42" ] || { echo "word run FAILED"; exit 1; }
+
+      # WORD is an absolute path in every step from here on, because several
+      # suites cd into a temporary directory before they run it.
+      # dev/toolchain/hostpath.sh makes a relative WORD absolute too, but the
+      # workflow shouldn't depend on which scripts do that.
+      - name: examples build and run
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_examples.sh
+
+      # There's no qemu here, so this and the documentation examples below run
+      # the host target only.
+      - name: a region reachable twice is never treated as unique
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_alias.sh
+
+      # The txt module and kind(), including a write into a literal, which the
+      # Windows runtime has its own check for.
+      - name: txt module and kind()
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_txt.sh
+
+      # The programs in README.md and SPEC 13, built by word.exe and run here,
+      # held to the output the text says they print.
+      - name: the documentation's examples print what they say, natively
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_doc_examples.sh
+
+      # The language and CLI suite, the gap suite and the language guarantees,
+      # against word.exe. Between them they hold over 800 cases, which build and
+      # run programs, open files by paths written into a program's text, and
+      # pass long command lines through GetCommandLineA. A case that needs Linux
+      # (strace, or running an ELF) says SKIP here.
+      - name: language + CLI conformance, natively
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_lang.sh
+
+      - name: coverage gaps, natively
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_gaps.sh
+
+      # out() and err() in call order through WriteFile: a fault, the exit
+      # status, a prompt answered through two pipes. The Linux-only cases (exec,
+      # /dev/stdout, a pty, /proc) say SKIP here.
+      - name: output order and buffering, natively
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_output.sh
+
+      - name: language guarantees, natively
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_guarantees.sh
+
+      # test_win_pe.sh with Windows underneath, so the cases that skip elsewhere
+      # for want of a way to run a PE run here: argv through GetCommandLineA,
+      # fs.rename through MoveFileExA, the clock, the CSPRNG, a plain HTTP fetch
+      # over ws2_32, and HTTPS through the Crypt32 ROOT store, which only this
+      # platform has.
+      - name: the PE backend, run natively
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_win_pe.sh
+
+      # The crypto the net library is built from (SHA-256, SHA-512, HMAC, both
+      # AEADs, X25519, ECDSA and RSA, DER, X.509 and PEM, the TLS key schedule
+      # and handshake, DNS and HTTP framing) against published vectors. ci.yml
+      # runs them on x86-64 and arm64; this is the PE build, the one that speaks
+      # TLS on Windows.
+      - name: crypto in word, natively (known-answer vectors)
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_crypto_w.sh
+
+      # The other half of the tls_kat vector above. That KAT checks this build
+      # encodes the pinned ClientHello byte for byte, and this decodes the same
+      # bytes and checks them against SPEC 12.2's two tables. It runs no word
+      # binary itself; it's here so the check from the SPEC to what this build
+      # sends is complete in one job.
+      - name: the SPEC's TLS tables match the ClientHello on the wire
+        run: sh dev/toolchain/test_tls_surface.sh
+
+      # net is word source compiled into the program that uses it, so these are
+      # questions a host build answers: a program calling get() builds here and
+      # carries the library, a program that never uses the network carries none
+      # of it, a folder holding only the binary and one .w file builds an HTTPS
+      # client for every target, and a fault inside the bundled library points
+      # at the program's own line.
+      - name: net in word, natively (the bundled library)
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_net_w.sh
+
+      # connect, send, recv and close over loopback through ws2_32. The connect
+      # deadline isn't checked here: Windows refuses a handshake it has no room
+      # for instead of leaving it unanswered, so the suite finds no silent peer
+      # and prints a note that it skipped that case. test_net_limits below
+      # reaches the deadline another way.
+      - name: sockets through ws2_32 (loopback)
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_sockets.sh
+
+      # Every verb over http:// and https://, and the insecure flag, where the
+      # case that matters is that leaving it out keeps verification on. Local
+      # servers only.
+      - name: net verbs and the insecure flag (local servers)
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_net_verbs.sh
+
+      # The bounds a fetch runs under. Without a working SO_RCVTIMEO the
+      # stalled-peer case never returns, so this is the suite that catches the
+      # timeout() bug above.
+      - name: the deadlines and the response ceiling hold on Windows
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_net_limits.sh
+
+      # Where net gets its resolver and trust anchors on Windows. A path with a
+      # leading slash names the root of the current drive, and any signed-in
+      # user can create a directory at the root of C:, so reading
+      # /etc/resolv.conf or a PEM bundle under /etc/ssl would let them choose
+      # every program's resolver or trust store. The suite checks the resolver
+      # against Get-DnsClientServerAddress, fetches localhost from a loopback
+      # server, and plants resolv.conf, the six PEM bundles and \proc\self\exe
+      # at the root of a subst drive to show none of them is read.
+      - name: the resolver and the trust store come from Windows, not the drive root
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_win_netconf.sh
+
+      # The X.509 profile against openssl and Go, on this platform's build of
+      # the same source. openssl ships with Git for Windows and Go is
+      # preinstalled, so both oracles are here.
+      - name: the X.509 profile agrees with openssl and Go
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_x509_profile.sh
+
+      # The decoders that read what a server sends before any of it is
+      # authenticated (X.509 and DER, then the handshake messages), fed
+      # truncated and corrupted seeds that must each be rejected without a
+      # fault, a hang or a crash. ci.yml runs the same fuzzers on the same
+      # source; this adds the PE runtime under the same inputs: an 8 MB stack,
+      # VirtualAlloc instead of mmap, and a crash that arrives as an exception
+      # code instead of a signal.
+      #
+      # At about a quarter of the Linux inputs. Each input is its own process,
+      # which costs tens of milliseconds on Windows against about 2 ms on
+      # Linux, and a private repository's Windows runner has two cores and bills
+      # at twice the Linux rate. FUZZ_OFFSETS=64 is about 3,700 of the 15,400
+      # Linux inputs. It keeps every seed and every kind of mutation, and still
+      # walks the short ServerHello and HelloRetryRequest seeds byte by byte.
+      - name: X.509 decoder fuzz, natively (a quarter of the Linux inputs)
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+          FUZZ_OFFSETS: 64
+        run: sh dev/toolchain/test_fuzz.sh
+
+      - name: fuzz the TLS handshake decoders, natively (a quarter of the Linux inputs)
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+          FUZZ_OFFSETS: 64
+        run: sh dev/toolchain/test_fuzz_tls.sh
+
+      # The DNS response parser and the HTTP response framing, on the PE build.
+      # At 64 per seed it's about 2,900 of the 5,500 Linux inputs.
+      - name: fuzz the DNS response parser and the HTTP response framing, natively
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+          FUZZ_OFFSETS: 64
+        run: sh dev/toolchain/test_fuzz_net.sh
+
+      # HTTPS end to end with the Crypt32 ROOT store as the trust store, which no
+      # other runner exercises. It gates here, although ci.yml runs the same
+      # suite as informational. Its one gating host is api.github.com, which a
+      # runner that can reach GitHub at all can reach. The large-body case skips
+      # when its CDN can't be reached, and the rest needs no network: a host, a
+      # path and a body too long to send must each come back none, not a fault.
+      #
+      # Capped like every step that waits on the network. The script's own
+      # timeouts add up to under four minutes.
+      - name: live HTTPS through the Crypt32 ROOT store (gating)
+        timeout-minutes: 5
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_net.sh
+
+      # The top 100 domains, through the Crypt32 ROOT store. Windows keeps a
+      # small store and fills it as roots are needed, so chains here often run
+      # one link further, to an older cross-signing root. That's how a
+      # trust-store bug showed up on Windows while Linux passed, so the breadth
+      # suite runs on both.
+      - name: the top 100 domains through the ROOT store (gating)
+        timeout-minutes: 12
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: TOP_SITES=100 TOP_SITES_JOBS=16 sh dev/toolchain/test_top_sites.sh
+
+      # The same client against a dozen independent hosts, every chain ending in
+      # the Crypt32 store. Informational, because it depends on the network and
+      # a fresh Windows image fills its ROOT store as it goes, so a host missed
+      # here can be the runner's state and not a word defect. Capped because
+      # continue-on-error makes a failure harmless but does nothing about a
+      # hang: twelve hosts at the script's 45 seconds each is nine minutes.
+      - name: live HTTPS across independent hosts (informational)
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          WORD: ${{ github.workspace }}/word.exe
+        run: sh dev/toolchain/test_net_live.sh
